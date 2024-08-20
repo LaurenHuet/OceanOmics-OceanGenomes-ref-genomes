@@ -1,8 +1,0 @@
-name: pairtools_sort
-channels:
-  - conda-forge
-  - bioconda
-  - defaults
-dependencies:
-  - bioconda::pairtools=1.1.0
-  - conda-forge::numpy=1.23

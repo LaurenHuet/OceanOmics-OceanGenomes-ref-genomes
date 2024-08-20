@@ -24,18 +24,17 @@ process CAT_HIC {
     mkdir cat_files
     cp $files/* .
 
-    if [ "\$(ls *hic.R1.fastq.gz 2>/dev/null | wc -l)" -gt 1 ]; then
-        zcat \\
+    if [ "\$(ls *R1*fastq.gz 2>/dev/null | wc -l)" -gt 1 ]; then
+        cat \\
             $args \\
-            *hic.R1.fastq.gz \\
-            > cat_files/${prefix}.hic.R1.fastq
+            *R1*fastq.gz \\
+            > cat_files/${prefix}.hic.R1.fastq.gz
 
-        zcat \\
+        cat \\
             $args \\
-            *hic.R2.fastq.gz \\
-            > cat_files/${prefix}.hic.R2.fastq
+            *R2*fastq.gz \\
+            > cat_files/${prefix}.hic.R2.fastq.gz
 
-        gzip cat_files/*
     else
         mv *fastq.gz cat_files
     fi

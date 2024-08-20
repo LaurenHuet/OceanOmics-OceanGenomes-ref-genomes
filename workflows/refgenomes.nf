@@ -65,7 +65,7 @@ workflow REFGENOMES {
         .map {
             meta ->
                 meta = meta[0]
-                meta.id = meta.sample + "_" + meta.version + "_" + meta.date
+                meta.id = meta.sample + "_" + meta.date + "." + meta.version
                 return [ meta, meta.hifi_dir ]
         }
 
@@ -74,7 +74,7 @@ workflow REFGENOMES {
             meta ->
                 if (meta.hic_dir[0] != null) {
                     meta = meta[0]
-                    meta.id = meta.sample + "_" + meta.version + "_" + meta.date
+                    meta.id = meta.sample + "_" + meta.date + "." + meta.version
                     return [ meta, meta.hic_dir ]
                 }
         }
@@ -1180,10 +1180,10 @@ workflow REFGENOMES {
     //
     // MODULE: Run rclone
     //
-    RCLONE (
-        ch_rclone_in
-    )
-    ch_versions = ch_versions.mix(RCLONE.out.versions.first())
+   // RCLONE (
+  //      ch_rclone_in
+  //  )
+  //  ch_versions = ch_versions.mix(RCLONE.out.versions.first())
 
     emit:
     multiqc_report = MULTIQC.out.report.toList() // channel: /path/to/multiqc_report.html

@@ -2,8 +2,10 @@ process BUSCO_BUSCO {
     tag "$meta.id"
     label 'process_medium'
 
-    conda "${moduleDir}/environment.yml"
-    container 'ezlabgva/busco:v5.7.1_cv1'
+   conda "${moduleDir}/environment.yml"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'docker://ezlabgva/busco:v5.7.1_cv1':
+        'biocontainers/busco:5.7.1--pyhdfd78af_0' }"
 
     input:
     tuple val(meta), path(fasta, stageAs:'tmp_input/*')

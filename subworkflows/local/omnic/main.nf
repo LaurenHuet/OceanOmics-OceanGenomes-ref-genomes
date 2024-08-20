@@ -69,10 +69,11 @@ workflow OMNIC {
     //
     // MODULE: Record valid ligation events
     //
-    ch_pairtools_parse_in = BWA_MEM.out.bam.join(CUT.out.cut_file)
+    ch_pairtools_parse_in = BWA_MEM.out.sam.join(CUT.out.cut_file)
 
     PAIRTOOLS_PARSE (
-        ch_pairtools_parse_in
+        ch_pairtools_parse_in,
+        params.tempdir
     )
     ch_versions = ch_versions.mix(PAIRTOOLS_PARSE.out.versions.first())
 
@@ -80,7 +81,8 @@ workflow OMNIC {
     // MODULE: Sort the pairsam file
     //
     PAIRTOOLS_SORT (
-        PAIRTOOLS_PARSE.out.pairsam
+        PAIRTOOLS_PARSE.out.pairsam,
+        params.tempdir
     )
     ch_versions = ch_versions.mix(PAIRTOOLS_SORT.out.versions.first())
 
@@ -88,7 +90,8 @@ workflow OMNIC {
     // MODULE: Remove PCR duplicates
     //
     PAIRTOOLS_DEDUP (
-        PAIRTOOLS_SORT.out.sorted
+        PAIRTOOLS_SORT.out.sorted,
+        params.tempdir
     )
     ch_versions = ch_versions.mix(PAIRTOOLS_DEDUP.out.versions.first())
 
@@ -96,7 +99,8 @@ workflow OMNIC {
     // MODULE: Generate .pairs and bam files
     //
     PAIRTOOLS_SPLIT (
-        PAIRTOOLS_DEDUP.out.pairs
+        PAIRTOOLS_DEDUP.out.pairs,
+        params.tempdir
     )
     ch_versions = ch_versions.mix(PAIRTOOLS_SPLIT.out.versions.first())
 

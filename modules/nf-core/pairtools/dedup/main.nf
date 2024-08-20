@@ -6,14 +6,15 @@ process PAIRTOOLS_DEDUP {
     // Not an issue with the biocontainers because they were built prior to numpy 1.24
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/pairtools:1.1.0--py310hb45ccb3_0' :
+        'docker.io/sawtooth01/pairtools:v1.1.0':
         'biocontainers/pairtools:1.1.0--py310hb45ccb3_0' }"
 
     input:
     tuple val(meta), path(input)
+    val(tempdir)
 
     output:
-    tuple val(meta), path("*.pairs.gz")  , emit: pairs
+    tuple val(meta), path("*.pairs")  , emit: pairs
     tuple val(meta), path("*.pairs.stat"), emit: stat
     path "versions.yml"                  , emit: versions
 
@@ -24,9 +25,10 @@ process PAIRTOOLS_DEDUP {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
+    export PATH=$PATH:/opt/conda/envs/pairtools/bin
     pairtools dedup \\
         $args \\
-        -o ${prefix}_dedup.pairs.gz \\
+        -o ${prefix}_dedup.pairs \\
         --output-stats ${prefix}_dedup.pairs.stat \\
         $input
 

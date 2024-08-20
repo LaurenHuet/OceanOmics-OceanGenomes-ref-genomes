@@ -12,7 +12,7 @@ process BWA_MEM {
     val   sort_bam
 
     output:
-    tuple val(meta), path("*.bam")  , emit: bam,    optional: true
+    tuple val(meta), path("*.sam")  , emit: sam,    optional: true
     tuple val(meta), path("*.cram") , emit: cram,   optional: true
     tuple val(meta), path("*.csi")  , emit: csi,    optional: true
     tuple val(meta), path("*.crai") , emit: crai,   optional: true
@@ -41,8 +41,8 @@ process BWA_MEM {
         -t $task.cpus \\
         \$INDEX \\
         $reads \\
-        | samtools $samtools_command $args2 ${reference} --threads $task.cpus -o ${prefix}.${extension} -
-
+        > ${prefix}.sam 
+    
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         bwa: \$(echo \$(bwa 2>&1) | sed 's/^.*Version: //; s/Contact:.*\$//')

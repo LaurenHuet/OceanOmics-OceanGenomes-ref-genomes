@@ -4,11 +4,12 @@ process PAIRTOOLS_SPLIT {
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/pairtools:1.1.0--py310hb45ccb3_0' :
+        'docker.io/sawtooth01/pairtools:v1.1.0':
         'biocontainers/pairtools:1.1.0--py310hb45ccb3_0' }"
 
     input:
     tuple val(meta), path(pairs)
+    val(tempdir)
 
     output:
     tuple val(meta), path("*.unsorted.bam"), emit: bam
@@ -22,6 +23,7 @@ process PAIRTOOLS_SPLIT {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
+    export PATH=$PATH:/opt/conda/envs/pairtools/bin
     pairtools \\
         split \\
         $args \\

@@ -4,16 +4,17 @@ process PAIRTOOLS_PARSE {
 
     // Pinning numpy to 1.23 until https://github.com/open2c/pairtools/issues/170 is resolved
     // Not an issue with the biocontainers because they were built prior to numpy 1.24
-    conda "${moduleDir}/environment.yml"
+   // conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/pairtools:1.1.0--py310hb45ccb3_0' :
+        'docker.io/sawtooth01/pairtools:v1.1.0': 
         'biocontainers/pairtools:1.1.0--py310hb45ccb3_0' }"
 
     input:
-    tuple val(meta), path(bam), path(chromsizes)
+    tuple val(meta), path(sam), path(chromsizes)
+    val(tempdir)
 
     output:
-    tuple val(meta), path("*.pairsam.gz")  , emit: pairsam
+    tuple val(meta), path("*.pairsam")  , emit: pairsam
     tuple val(meta), path("*.pairsam.stat"), emit: stat
     path "versions.yml"                    , emit: versions
 
@@ -24,13 +25,14 @@ process PAIRTOOLS_PARSE {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
+    export PATH=$PATH:/opt/conda/envs/pairtools/bin
     pairtools \\
         parse \\
         -c $chromsizes \\
         $args \\
         --output-stats ${prefix}.pairsam.stat \\
-        -o ${prefix}.pairsam.gz \\
-        $bam
+        -o ${prefix}.pairsam \\
+        $sam
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

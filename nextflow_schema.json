@@ -78,6 +78,10 @@
                 "binddir": {
                     "type": "string",
                     "description": "Directory to bind (e.g., '/scratch')."
+                },
+                "tempdir": {
+                    "type": "string",
+                    "description": "Directory to be your temporary directory."
                 }
             }
         },
