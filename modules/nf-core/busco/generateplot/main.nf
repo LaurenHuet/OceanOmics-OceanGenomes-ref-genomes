@@ -2,7 +2,7 @@ process BUSCO_GENERATEPLOT {
     label 'process_single'
 
     conda "${moduleDir}/environment.yml"
-    container 'ezlabgva/busco:v5.7.1_cv1'
+    container 'docker://ezlabgva/busco:v5.7.1_cv1'
 
     input:
     tuple val(meta), path(short_summary_txt, stageAs: 'busco/*')
