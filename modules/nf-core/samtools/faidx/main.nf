@@ -14,7 +14,7 @@ process SAMTOOLS_FAIDX {
     output:
     tuple val(meta), path ("*.{fa,fasta}") , emit: fa , optional: true
     tuple val(meta), path ("*.fai")        , emit: fai, optional: true
-    tuple val(meta), path ("*.gzi")        , emit: gzi, optional: true
+    //tuple val(meta), path ("*.gzi")        , emit: gzi, optional: true
     path "versions.yml"                    , emit: versions
 
     when:
@@ -23,15 +23,13 @@ process SAMTOOLS_FAIDX {
     script:
     def args = task.ext.args ?: ''
     """
-    gzip -d $fasta
-    fasta=\$(echo $fasta | sed 's/.gz//g')
     samtools \\
         faidx \\
-        \$fasta \\
+        ${fasta} \\
         $args
 
-    rm \$fasta
-    mv \${fasta}.fai ${fasta}.fai
+    # // rm \$fasta
+    # // mv \${fasta}.fai ${fasta}.fai
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

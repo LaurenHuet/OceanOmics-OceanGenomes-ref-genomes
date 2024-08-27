@@ -19,7 +19,7 @@ process GFASTATS {
 
     output:
     tuple val(meta), path("*.assembly_summary"), emit: assembly_summary
-    tuple val(meta), path("*.${out_fmt}.gz")   , emit: assembly
+    tuple val(meta), path("*.${out_fmt}")   , emit: assembly
     path "versions.yml"                        , emit: versions
 
     when:
@@ -43,7 +43,7 @@ process GFASTATS {
         $ibed \\
         $ebed \\
         $sak \\
-        --out-format ${prefix}_${haplotype}.${out_fmt}.gz \\
+        --out-format ${prefix}_${haplotype}.${out_fmt} \\
         $assembly \\
         \$genome_size \\
         $target \\
@@ -58,7 +58,7 @@ process GFASTATS {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.${out_fmt}.gz
+    touch ${prefix}.${out_fmt}
     touch ${prefix}.assembly_summary
 
     cat <<-END_VERSIONS > versions.yml
