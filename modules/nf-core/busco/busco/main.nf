@@ -71,7 +71,7 @@ process BUSCO_BUSCO {
         --in "\$INPUT_SEQS" \\
         --out ${prefix}-busco \\
         --mode $mode \\
-        --lineage_dataset $busco_lineages_path \\
+        --lineage_dataset ./$busco_lineages_path \\
         $busco_config \\
         $args
 
