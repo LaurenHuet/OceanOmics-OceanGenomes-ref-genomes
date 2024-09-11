@@ -1,6 +1,7 @@
 process BUSCO_BUSCO {
     tag "$meta.id"
     label 'process_medium'
+    scratch true
 
    conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -11,19 +12,20 @@ process BUSCO_BUSCO {
     tuple val(meta), path(fasta, stageAs:'tmp_input/*')
     val mode                              // Required:    One of genome, proteins, or transcriptome
     path busco_lineages_path              // Recommended: path to busco lineages
+    path asmversion
     path config_file                      // Optional:    busco configuration file
 
     output:
-    tuple val(meta), path("*-busco.batch_summary.txt")                 , emit: batch_summary
-    tuple val(meta), path("short_summary.*.txt")                       , emit: short_summaries_txt   , optional: true
-    tuple val(meta), path("short_summary.*.json")                      , emit: short_summaries_json  , optional: true
-    tuple val(meta), path("*-busco/*/run_*/full_table*.tsv")           , emit: full_table            , optional: true
-    tuple val(meta), path("*-busco/*/run_*/missing_busco_list*.tsv")   , emit: missing_busco_list    , optional: true
-    tuple val(meta), path("*-busco/*/run_*/single_copy_proteins.faa")  , emit: single_copy_proteins  , optional: true
-    tuple val(meta), path("*-busco/*/run_*/busco_sequences")           , emit: seq_dir
-    tuple val(meta), path("*-busco/*/translated_proteins")             , emit: translated_dir        , optional: true
-    tuple val(meta), path("*-busco")                                   , emit: busco_dir
-    path "versions.yml"                                                , emit: versions
+    tuple val(meta), path("*.batch_summary.txt")                   , emit: batch_summary
+    tuple val(meta), path("*short_summary.*.txt")                  , emit: short_summaries_txt   , optional: true
+    tuple val(meta), path("*short_summary.*.json")                 , emit: short_summaries_json  , optional: true
+    tuple val(meta), path("*/*/run_*/full_table*.tsv")             , emit: full_table            , optional: true
+    tuple val(meta), path("*/*/run_*/missing_busco_list*.tsv")     , emit: missing_busco_list    , optional: true
+    tuple val(meta), path("*/*/run_*/single_copy_proteins.faa")    , emit: single_copy_proteins  , optional: false
+    tuple val(meta), path("*/*/run_*/busco_sequences")             , emit: seq_dir               , optional: false
+    tuple val(meta), path("*/*/translated_proteins")               , emit: translated_dir        , optional: true
+    tuple val(meta), path("*-busco")                               , emit: busco_dir
+    path "versions.yml"                                            , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -69,7 +71,7 @@ process BUSCO_BUSCO {
     busco \\
         --cpu $task.cpus \\
         --in "\$INPUT_SEQS" \\
-        --out ${prefix}-busco \\
+        --out ${prefix}.${asmversion} \\
         --mode $mode \\
         --lineage_dataset ./$busco_lineages_path \\
         $busco_config \\
@@ -79,8 +81,8 @@ process BUSCO_BUSCO {
     rm -rf "\$INPUT_SEQS"
 
     # Move files to avoid staging/publishing issues
-    mv ${prefix}-busco/batch_summary.txt ${prefix}-busco.batch_summary.txt
-    mv ${prefix}-busco/*/short_summary.*.{json,txt} . || echo "Short summaries were not available: No genes were found."
+    mv ${prefix}.${asmversion}-busco/batch_summary.txt ${prefix}.${asmversion}.batch_summary.txt
+    mv ${prefix}.${asmversion}-busco/*/short_summary.*.{json,txt} . || echo "Short summaries were not available: No genes were found."
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -92,8 +94,8 @@ process BUSCO_BUSCO {
     def prefix      = task.ext.prefix ?: "${meta.id}"
     def fasta_name  = files(fasta).first().name - '.gz'
     """
-    touch ${prefix}-busco.batch_summary.txt
-    mkdir -p ${prefix}-busco/$fasta_name/run_busco/busco_sequences
+    touch ${prefix}.${asmversion}.batch_summary.txt
+    mkdir -p ${prefix}.${asmversion}-busco/$fasta_name/run_busco/busco_sequences
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

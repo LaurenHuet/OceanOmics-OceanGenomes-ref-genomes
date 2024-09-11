@@ -110,7 +110,8 @@ workflow OMNIC {
     SAMTOOLS_SORT (
         PAIRTOOLS_SPLIT.out.bam,
         [[], []],
-        ch_haplotype
+        ch_haplotype,
+        "hic.mapped.contigs"
     )
     ch_versions = ch_versions.mix(SAMTOOLS_SORT.out.versions.first())
 

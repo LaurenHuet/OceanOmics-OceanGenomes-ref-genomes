@@ -151,6 +151,7 @@ workflow REFGENOMES {
 
     HIFIASM (
         ch_hifiasm_in,
+        ".0.hifiasm",
         [],
         []
     )
@@ -167,6 +168,7 @@ workflow REFGENOMES {
         "fasta",
         "",
         "hap1",
+        ".0.hifiasm",
         [],
         [],
         [],
@@ -179,6 +181,7 @@ workflow REFGENOMES {
         "fasta",
         "",
         "hap2",
+        ".0.hifiasm",
         [],
         [],
         [],
@@ -199,6 +202,7 @@ workflow REFGENOMES {
         ch_contig_assemblies,
         params.buscomode,
         params.buscodb,
+        ".0.hifiasm",
         []
     )
     ch_versions = ch_versions.mix(BUSCO_BUSCO.out.versions.first())
@@ -209,6 +213,7 @@ workflow REFGENOMES {
     BUSCO_GENERATEPLOT (
         BUSCO_BUSCO.out.short_summaries_txt,
         "contigs"
+        ".0.hifiasm"
     )
     ch_versions = ch_versions.mix(BUSCO_GENERATEPLOT.out.versions.first())
 
@@ -219,7 +224,8 @@ workflow REFGENOMES {
 
     MERQURY (
         ch_merqury_in,
-        "contigs"
+        "contigs",
+        "0.hifiasm"
     )
     ch_versions = ch_versions.mix(MERQURY.out.versions.first())
 
@@ -258,13 +264,13 @@ workflow REFGENOMES {
 
     YAHS_HAP1 (
         ch_yahs_hap1_in,
-        "hap1"
+        ".1.yahs.hap1"
     )
     ch_versions = ch_versions.mix(YAHS_HAP1.out.versions.first())
 
     YAHS_HAP2 (
         ch_yahs_hap1_in,
-        "hap2"
+        ".1.yahs.hap2"
     )
     ch_versions = ch_versions.mix(YAHS_HAP2.out.versions.first())
 
@@ -274,14 +280,14 @@ workflow REFGENOMES {
     FCS_FCSGX_HAP1 (
         YAHS_HAP1.out.scaffolds_fasta,
         params.gxdb,
-        "hap1"
+        ".1.yahs.hap1.NCBI"
     )
     ch_versions = ch_versions.mix(FCS_FCSGX_HAP1.out.versions.first())
 
     FCS_FCSGX_HAP2 (
         YAHS_HAP2.out.scaffolds_fasta,
         params.gxdb,
-        "hap2"
+        ".1.yahs.hap2.NCBI"
     )
     ch_versions = ch_versions.mix(FCS_FCSGX_HAP2.out.versions.first())
 
@@ -290,13 +296,13 @@ workflow REFGENOMES {
     //
     TIARA_TIARA_HAP1 (
         YAHS_HAP1.out.scaffolds_fasta,
-        "hap1"
+        ".1.yahs.hap1.tiara"
     )
     ch_versions = ch_versions.mix(TIARA_TIARA_HAP1.out.versions.first())
 
     TIARA_TIARA_HAP2 (
         YAHS_HAP2.out.scaffolds_fasta,
-        "hap2"
+        ".1.yahs.hap2.tiara"
     )
     ch_versions = ch_versions.mix(TIARA_TIARA_HAP2.out.versions.first())
 
@@ -308,13 +314,13 @@ workflow REFGENOMES {
 
     BBMAP_FILTERBYNAME_HAP1 (
         ch_bbmap_filterbyname_hap1_in,
-        "hap1_filtered_scaffolds.fa"
+        ".2.tiara.hap1_scaffolds.fa"
     )
     ch_versions = ch_versions.mix(BBMAP_FILTERBYNAME_HAP1.out.versions.first())
 
     BBMAP_FILTERBYNAME_HAP2 (
         ch_bbmap_filterbyname_hap2_in,
-        "hap2_filtered_scaffolds.fa"
+        ".2.tiara.hap2_scaffolds.fa"
     )
     ch_versions = ch_versions.mix(BBMAP_FILTERBYNAME_HAP2.out.versions.first())
 
@@ -341,7 +347,7 @@ workflow REFGENOMES {
         ch_gfastats_fin_in,
         "fasta",
         "",
-        "final",
+        ".2.tiara.",
         [],
         [],
         [],
@@ -356,6 +362,7 @@ workflow REFGENOMES {
         CAT_SCAFFOLDS.out.cat_file,
         params.buscomode,
         params.buscodb,
+        ".0.hifiasm"
         []
     )
     ch_versions = ch_versions.mix(BUSCO_BUSCO_FINAL.out.versions.first())
@@ -365,24 +372,12 @@ workflow REFGENOMES {
     //
     BUSCO_GENERATEPLOT_FINAL (
         BUSCO_BUSCO_FINAL.out.short_summaries_txt,
-        "scaffolds"
+        "scaffolds",
+        ".0.hifiasm",
     )
     ch_versions = ch_versions.mix(BUSCO_GENERATEPLOT_FINAL.out.versions.first())
 
-    //
-    // MODULE: Run Merqury again
-    //
-    ch_merqury_fin_in = MERYL_COUNT.out.meryl_db.join(CAT_SCAFFOLDS.out.hap1_scaffold).join(CAT_SCAFFOLDS.out.hap2_scaffold)
-        .map {
-            meta, meryl_db, hap1_scaffold, hap2_scaffold ->
-                return [ meta, meryl_db, [ hap1_scaffold, hap2_scaffold ] ]
-        }
-
-    MERQURY_FINAL (
-        ch_merqury_fin_in,
-        "scaffolds"
-    )
-    ch_versions = ch_versions.mix(MERQURY_FINAL.out.versions.first())
+ 
 
     //
     // Collate and save software versions

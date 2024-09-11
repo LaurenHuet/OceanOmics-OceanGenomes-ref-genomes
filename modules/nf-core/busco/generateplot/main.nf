@@ -1,5 +1,6 @@
 process BUSCO_GENERATEPLOT {
-    label 'process_single'
+    tag "$meta.id"
+    label 'process_low'
 
     conda "${moduleDir}/environment.yml"
     container 'docker://ezlabgva/busco:v5.7.1_cv1'

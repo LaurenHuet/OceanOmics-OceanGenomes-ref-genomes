@@ -12,13 +12,14 @@ process GFASTATS {
     val out_fmt                       // output format (fasta/fastq/gfa)
     val target                        // target specific sequence by header, optionally with coordinates (optional).
     val haplotype
+    val asmversion                     // tells you what stage the assembly is in
     path agpfile                      // -a --agp-to-path <file> converts input agp to path and replaces existing paths.
     path include_bed                  // -i --include-bed <file> generates output on a subset list of headers or coordinates in 0-based bed format.
     path exclude_bed                  // -e --exclude-bed <file> opposite of --include-bed. They can be combined (no coordinates).
     path instructions                 // -k --swiss-army-knife <file> set of instructions provided as an ordered list.
 
     output:
-    tuple val(meta), path("*.assembly_summary"), emit: assembly_summary
+    tuple val(meta), path("*.assembly_summary.txt"), emit: assembly_summary
     tuple val(meta), path("*.${out_fmt}")   , emit: assembly
     path "versions.yml"                        , emit: versions
 
@@ -43,11 +44,11 @@ process GFASTATS {
         $ibed \\
         $ebed \\
         $sak \\
-        --out-format ${prefix}_${haplotype}.${out_fmt} \\
+        --out-format ${prefix}.${asmversion}.${haplotype}.${out_fmt} \\
         $assembly \\
         \$genome_size \\
         $target \\
-        > ${prefix}_${haplotype}.assembly_summary
+        > ${prefix}.${asmversion}.${haplotype}.assembly_summary.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -58,8 +59,8 @@ process GFASTATS {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.${out_fmt}
-    touch ${prefix}.assembly_summary
+    touch ${prefix}.${asmversion}.${haplotype}.${out_fmt}
+    touch ${prefix}.${asmversion}.${haplotype}.assembly_summary.txt
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

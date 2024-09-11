@@ -9,6 +9,7 @@ process HIFIASM {
 
     input:
     tuple val(meta), path(reads), path(hic_read1), path(hic_read2)
+    path asmversion
     path  paternal_kmer_dump
     path  maternal_kmer_dump
 
@@ -19,8 +20,8 @@ process HIFIASM {
     tuple val(meta), path("*.ovlp.reverse.bin"), emit: reverse_overlaps
     tuple val(meta), path("*.bp.p_ctg.gfa")    , emit: processed_contigs, optional: true
     tuple val(meta), path("*.p_utg.gfa")       , emit: processed_unitigs, optional: true
-    tuple val(meta), path("*.asm.p_ctg.gfa")   , emit: primary_contigs  , optional: true
-    tuple val(meta), path("*.asm.a_ctg.gfa")   , emit: alternate_contigs, optional: true
+    tuple val(meta), path("*.p_ctg.gfa")       , emit: primary_contigs  , optional: true
+    tuple val(meta), path("*.a_ctg.gfa")       , emit: alternate_contigs, optional: true
     tuple val(meta), path("*.hap1.p_ctg.gfa")  , emit: hap1_contigs     , optional: true
     tuple val(meta), path("*.hap2.p_ctg.gfa")  , emit: hap2_contigs     , optional: true
     tuple val(meta), path("*.log")             , emit: log
@@ -42,7 +43,7 @@ process HIFIASM {
         """
         hifiasm \\
             $args \\
-            -o ${prefix}.asm \\
+            -o ${prefix} \\
             -t $task.cpus \\
             -1 $paternal_kmer_dump \\
             -2 $maternal_kmer_dump \\
@@ -63,7 +64,7 @@ process HIFIASM {
         """
         hifiasm \\
             $args \\
-            -o ${prefix}.asm \\
+            -o ${prefix} \\
             -t $task.cpus \\
             --h1 $hic_read1 \\
             --h2 $hic_read2 \\
@@ -80,7 +81,7 @@ process HIFIASM {
         """
         hifiasm \\
             $args \\
-            -o ${prefix}.asm \\
+            -o ${prefix} \\
             -t $task.cpus \\
             $reads \\
             2> >( tee ${prefix}.stderr.log >&2 )
@@ -95,16 +96,16 @@ process HIFIASM {
         def args = task.ext.args ?: ''
         def prefix = task.ext.prefix ?: "${meta.id}"
         """
-        touch ${prefix}.asm.r_utg.gfa
-        touch ${prefix}.asm.ec.bin
-        touch ${prefix}.asm.ovlp.source.bin
-        touch ${prefix}.asm.ovlp.reverse.bin
-        touch ${prefix}.asm.bp.p_ctg.gfa
-        touch ${prefix}.asm.p_utg.gfa
-        touch ${prefix}.asm.p_ctg.gfa
-        touch ${prefix}.asm.a_ctg.gfa
-        touch ${prefix}.asm.hap1.p_ctg.gfa
-        touch ${prefix}.asm.hap2.p_ctg.gfa
+        touch ${prefix}.r_utg.gfa
+        touch ${prefix}.ec.bin
+        touch ${prefix}.ovlp.source.bin
+        touch ${prefix}.ovlp.reverse.bin
+        touch ${prefix}.bp.p_ctg.gfa
+        touch ${prefix}.p_utg.gfa
+        touch ${prefix}.p_ctg.gfa
+        touch ${prefix}.a_ctg.gfa
+        touch ${prefix}.hap1.p_ctg.gfa
+        touch ${prefix}.hap2.p_ctg.gfa
         touch ${prefix}.stderr.log
 
         cat <<-END_VERSIONS > versions.yml
