@@ -1,12 +1,13 @@
 process BUSCO_GENERATEPLOT {
-    label 'process_single'
+    tag "$meta.id"
+    label 'process_low'
 
     conda "${moduleDir}/environment.yml"
     container 'docker://ezlabgva/busco:v5.7.1_cv1'
 
     input:
     tuple val(meta), path(short_summary_txt, stageAs: 'busco/*')
-    val(stage)
+    val(asmversion)
 
     output:
     tuple val(meta), path('*.png'), emit: png
@@ -23,7 +24,7 @@ process BUSCO_GENERATEPLOT {
         $args \\
         -wd busco
 
-    mv ./busco/busco_figure.png ${meta.id}_${prefix}_${stage}.png
+    mv ./busco/busco_figure.png ${meta.id}_${asmversion}_${prefix}.png
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

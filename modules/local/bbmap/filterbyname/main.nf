@@ -12,7 +12,7 @@ process BBMAP_FILTERBYNAME {
     val(suffix)
 
     output:
-    tuple val(meta), path("*_filtered_scaffolds.fa"), emit: scaffolds
+    tuple val(meta), path("*_scaffolds.fa")         , emit: scaffolds
     path  "versions.yml"                            , emit: versions
 
     when:
@@ -24,7 +24,7 @@ process BBMAP_FILTERBYNAME {
     """
     filterbyname.sh \\
         in="$fasta" \\
-        out="${prefix}_${suffix}" \\
+        out="${prefix}.${suffix}_scaffolds.fa" \\
         names="$contig_list" \\
         exclude \\
         $args

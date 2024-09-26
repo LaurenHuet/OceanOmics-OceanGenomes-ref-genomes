@@ -11,6 +11,7 @@ process SAMTOOLS_SORT {
     tuple val(meta) , path(bam)
     tuple val(meta2), path(fasta)
     val(haplotype)
+    val(asmversion)
 
     output:
     tuple val(meta), path("*.bam"),     emit: bam,  optional: true
@@ -41,7 +42,7 @@ process SAMTOOLS_SORT {
         -T ${prefix} \\
         --threads $task.cpus \\
         ${reference} \\
-        -o ${prefix}_${haplotype}.${extension} \\
+        -o ${prefix}_${haplotype}.${asmversion}.${extension} \\
         -
 
     cat <<-END_VERSIONS > versions.yml
