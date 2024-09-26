@@ -32,7 +32,7 @@ process GENOMESCOPE2 {
         --input $histogram \\
         $args \\
         --output . \\
-        --name_prefix $prefix
+        --name_prefix ${prefix}_genomescope
 
     test -f "fitted_hist.png" && mv fitted_hist.png ${prefix}_genomescope_fitted_hist.png
     test -f "lookup_table.txt" && mv lookup_table.txt ${prefix}_genomescope_lookup_table.txt

@@ -27,7 +27,7 @@ process TIARA_TIARA {
     def VERSION = '1.0.3' // WARN: Version information not provided by tool on CLI. Please update this string when bumping container versions.
     """
     tiara -i ${fasta} \
-        -o ${prefix}_${haplotype}.txt \
+        -o ${prefix}${haplotype}.txt \
         --threads ${task.cpus} \
         ${args}
 

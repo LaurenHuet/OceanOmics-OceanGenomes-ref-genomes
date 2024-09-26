@@ -9,7 +9,7 @@ process HIFIASM {
 
     input:
     tuple val(meta), path(reads), path(hic_read1), path(hic_read2)
-    path asmversion
+    val asmversion
     path  paternal_kmer_dump
     path  maternal_kmer_dump
 

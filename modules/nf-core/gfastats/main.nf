@@ -18,6 +18,7 @@ process GFASTATS {
     path exclude_bed                  // -e --exclude-bed <file> opposite of --include-bed. They can be combined (no coordinates).
     path instructions                 // -k --swiss-army-knife <file> set of instructions provided as an ordered list.
 
+
     output:
     tuple val(meta), path("*.assembly_summary.txt"), emit: assembly_summary
     tuple val(meta), path("*.${out_fmt}")   , emit: assembly
@@ -49,6 +50,9 @@ process GFASTATS {
         \$genome_size \\
         $target \\
         > ${prefix}.${asmversion}.${haplotype}.assembly_summary.txt
+
+    touch "${prefix}.${asmversion}.${haplotype}.${out_fmt}"
+
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

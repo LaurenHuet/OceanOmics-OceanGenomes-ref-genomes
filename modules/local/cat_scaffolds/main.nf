@@ -8,12 +8,13 @@ process CAT_SCAFFOLDS {
         'biocontainers/fastqc:0.12.1--hdfd78af_0' }"
 
     input:
-    tuple val(meta), path(files)
+    tuple val(meta), path(scaffolds)
+    val asmversion
 
     output:
-    tuple val(meta), path("*_combined_scaffold.fa"), emit: cat_file
-    tuple val(meta), path("*H1.scaffold_1.fa")     , emit: hap1_scaffold
-    tuple val(meta), path("*H2.scaffold_2.fa")     , emit: hap2_scaffold
+    tuple val(meta), path("*_combined_scaffolds.fa"), emit: cat_file
+    tuple val(meta), path("*hap1.scaffolds_1.fa")     , emit: hap1_scaffold
+    tuple val(meta), path("*hap2.scaffolds_2.fa")     , emit: hap2_scaffold
     path  "versions.yml"                           , emit: versions
 
     when:
@@ -22,14 +23,17 @@ process CAT_SCAFFOLDS {
     script:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    sed 's/scaffold/H1.scaffold/g' *hap1_filtered_scaffolds.fa > ${prefix}_H1.scaffold_1.fa
-    sed 's/scaffold/H2.scaffold/g' *hap2_filtered_scaffolds.fa > ${prefix}_H2.scaffold_2.fa
+    # Rename scaffolds
+    sed 's/scaffold/H1.scaffold/g' ${prefix}.hic1.2.tiara.hap1_scaffolds.fa > ${prefix}.hap1.scaffolds_1.fa
+    sed 's/scaffold/H2.scaffold/g' ${prefix}.hic1.2.tiara.hap2_scaffolds.fa > ${prefix}.hap2.scaffolds_2.fa
 
-    cat ${prefix}_H1.scaffold_1.fa ${prefix}_H2.scaffold_2.fa > "${prefix}_combined_scaffold.fa"
+    # Concatenate hap1 and hap2 scaffolds
+    cat ${prefix}.hap1.scaffolds_1.fa ${prefix}.hap2.scaffolds_2.fa > "${prefix}${asmversion}_combined_scaffolds.fa"
 
+    # Capture FastQC version in versions.yml
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        fastqc: \$( fastqc --version | sed '/FastQC v/!d; s/.*v//' )
+        fastqc: \$(fastqc --version | sed '/FastQC v/!d; s/.*v//')
     END_VERSIONS
     """
 }
