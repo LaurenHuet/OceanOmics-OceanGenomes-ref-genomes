@@ -1,0 +1,2 @@
+pretextgraph:
+  - "modules/nf-core/pretextgraph/**"

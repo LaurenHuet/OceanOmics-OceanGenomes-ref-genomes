@@ -1,0 +1,54 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/nf-core/modules/master/modules/meta-schema.json
+name: "pretextgraph"
+## TODO nf-core: Add a description of the module and list keywords
+description: "Converts bedgraph formatted data and embeds inside a Pretext contact map."
+keywords:
+  - contact
+  - bedgraph
+  - map
+tools:
+  - "pretextgraph":
+      ## TODO nf-core: Add a description and other details for the software below
+      description: "Embeds bedgraph data into Pretext contact maps."
+      homepage: "https://github.com/sanger-tol/PretextGraph"
+      documentation: "https://github.com/sanger-tol/PretextGraph/blob/master/README.md"
+      licence: ['MIT']
+
+## TODO nf-core: Add a description of all of the variables used as input
+input:
+  # Only when we have meta
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. `[ id:'sample1', single_end:false ]`
+  
+  ## TODO nf-core: Delete / customise this example input
+  - bedgraph:
+      type: file
+      description: bedgraph formatted file
+      pattern: "*.bedgraph"
+
+## TODO nf-core: Add a description of all of the variables used as output
+output:
+  #Only when we have meta
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. `[ id:'sample1', single_end:false ]`
+  
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+  - pretext:
+      type: file
+      description: pretext map
+      pattern: "*.pretext"
+
+authors:
+  - "@laurenhuet"
+maintainers:
+  - "@laurenhuet"

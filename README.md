@@ -79,7 +79,7 @@ For details about the output files and reports, please refer to the
 
 ## Credits
 
-Computational-Biology-OceanOmics/OceanGenomes-refgenomes was originally written by Emma de Jong and was converted to Nextflow by Adam Bennett. This version was built on top of the nf-core template.
+Computational-Biology-OceanOmics/OceanGenomes-refgenomes was originally written by Emma de Jong and was converted to Nextflow by Adam Bennett and Lauren Huet. This version was built on top of the nf-core template.
 
 ## Citations
 

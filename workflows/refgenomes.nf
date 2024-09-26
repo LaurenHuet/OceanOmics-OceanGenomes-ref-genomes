@@ -33,6 +33,17 @@ include { BUSCO_BUSCO as BUSCO_BUSCO_FINAL               } from '../modules/nf-c
 include { BUSCO_GENERATEPLOT as BUSCO_GENERATEPLOT_FINAL } from '../modules/nf-core/busco/generateplot/main'
 include { MERQURY as MERQURY_FINAL                       } from '../modules/nf-core/merqury/main'
 include { TAR                                            } from '../modules/local/tar/main'
+include { COVERAGE_TRACKS                                } from '../subworkflows/local/coverage_tracks/main'
+include { TIDK_EXPLORE                                   } from '../modules/nf-core/tidk/explore/main'
+include { OMNIC as OMNIC_HAP1_FINAL                      } from '../subworkflows/local/omnic/main'
+include { OMNIC as OMNIC_HAP2_FINAL                      } from '../subworkflows/local/omnic/main'
+include { OMNIC as OMNIC_DUAL_HAP                        } from '../subworkflows/local/omnic/main'
+include { PRETEXTMAP as PRETEXTMAP_HAP_1                 } from '../modules/nf-core/pretextmap/main'
+include { PRETEXTMAP as PRETEXTMAP_HAP_2                 } from '../modules/nf-core/pretextmap/main'
+include { PRETEXTMAP as PRETEXTMAP_DUAL_HAP              } from '../modules/nf-core/pretextmap/main'
+include { PRETEXTSNAPSHOT PRETEXTSNAPSHOT_HAP1           } from '../modules/nf-core/pretextsnapshot/main' 
+include { PRETEXTSNAPSHOT PRETEXTSNAPSHOT_HAP2           } from '../modules/nf-core/pretextsnapshot/main' 
+include { PRETEXTSNAPSHOT PRETEXTSNAPSHOT_DUAL_HAP       } from '../modules/nf-core/pretextsnapshot/main'  
 include { MD5SUM as MD5SUM_OMNICS_HAP1                   } from '../modules/local/md5sum/main'
 include { MD5SUM as MD5SUM_OMNICS_HAP2                   } from '../modules/local/md5sum/main'
 include { MD5SUM as MD5SUM_YAHS_HAP1                     } from '../modules/local/md5sum/main'
@@ -43,7 +54,6 @@ include { paramsSummaryMap                               } from 'plugin/nf-valid
 include { paramsSummaryMultiqc                           } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML                         } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { methodsDescriptionText                         } from '../subworkflows/local/utils_oceangenomesrefgenomes_pipeline'
-
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RUN MAIN WORKFLOW
@@ -384,6 +394,102 @@ workflow REFGENOMES {
     )
     ch_versions = ch_versions.mix(MERQURY_FINAL.out.versions.first())
 
+    //
+    // SUBWORKFLOW: Run coverage tracks
+    //
+
+    ch_coverage_tracks_in = HIFIADAPTERFILT.out.reads.join(CAT_SCAFFOLDS.out.cat_file)
+        .map {
+            meta, reads, assemblies ->
+                return [ meta, reads, assemblies[2] ]
+            }
+    
+     COVERAGE_TRACKS (
+        ch_coverage_tracks_in
+    )
+    ch_versions = ch_versions.mix(COVERAGE_TRACKS.out.versions.first())
+
+    //
+    // MODULE: Run TIDK 
+    //
+
+    TIDK_EXPLORE ( CAT_SCAFFOLDS.out.cat_file )
+    ch_versions = ch_versions.mix(TIDK_EXPLORE.out.versions.first())
+    
+    //
+    // SUBWORFLOW: Run omnic again
+    //
+
+    ch_omnic_hap1_in = CAT_HIC.out.cat_files.join(CAT_SCAFFOLDS.out.hap1_scaffold)
+        .map {
+            meta, reads, assemblies ->
+                return [ meta, reads, assemblies[0] ]
+        }
+
+    ch_omnic_hap2_in = CAT_HIC.out.cat_files.join(CAT_SCAFFOLDS.out.hap2_scaffold)
+        .map {
+            meta, reads, assemblies ->
+                return [ meta, reads, assemblies[1] ]
+        }
+
+    ch_omic_dual_in = CAT_HIC.out.cat_files.join.(CAT_SCAFFOLDS.out.cat_file)
+            .map {
+            meta, reads, assemblies ->
+                return [ meta, reads, assemblies[2] ]
+            }
+
+   OMNIC_HAP1_FINAL (
+        ch_omnic_hap1_in,
+        "hap1"
+    )
+    ch_versions = ch_versions.mix(OMNIC_HAP1_FINAL.out.versions.first())
+
+    OMNIC_HAP2_FINAL (
+        ch_omnic_hap2_in,
+        "hap2"
+    )
+    ch_versions = ch_versions.mix(OMNIC_HAP2_FINAL.out.versions.first())
+
+    OMNIC_DUAL_HAP (
+        ch_omic_dual_in
+        'dual'
+    )
+
+    ch_versions = ch_versions.mix(OMNIC_DUAL_HAP.out.versions.first())
+
+    //
+    // MODULE: Run Pretext Map
+    ///
+
+    PRETEXTMAP_HAP_1 (OMNIC_HAP1_FINAL.out.bam)
+    
+    ch_versions = ch_versions.mix(PRETEXTMAP_HAP_1.out.versions.first())
+    
+    PRETEXTMAP_HAP_2 (OMNIC_HAP2_FINAL.out.bam)
+    
+    ch_versions = ch_versions.mix(PRETEXTMAP_HAP_1.out.versions.first())
+    
+    PRETEXTMAP_DUAL_HAP (OMNIC_DUAL_HAP.out.bam)
+    
+    ch_versions = ch_versions.mix(PRETEXTMAP_HAP_1.out.versions.first())
+    
+    //
+    // MODULE: Run Pretext snapshot
+    //
+
+    PRETEXTSNAPSHOT_HAP1 (PRETEXTMAP_HAP_1.out.pretext)  
+    
+    ch_versions = ch_versions.mix(PRETEXTSNAPSHOT_HAP1.out.versions.first())
+
+    PRETEXTSNAPSHOT_HAP2 (PRETEXTMAP_HAP_2.out.pretext)
+    
+    ch_versions = ch_versions.mix(PRETEXTSNAPSHOT_HAP2.out.versions.first())
+
+    PRETEXTSNAPSHOT_DUAL_HAP (PRETEXTMAP_DUAL_HAP.out.pretext)
+    
+    ch_versions = ch_versions.mix(PRETEXTSNAPSHOT_DUAL_HAP.out.versions.first())
+
+    
     //
     // Collate and save software versions
     //
