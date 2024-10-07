@@ -21,11 +21,11 @@ process CAT_SCAFFOLDS {
     task.ext.when == null || task.ext.when
 
     script:
-    def prefix = task.ext.prefix ?: "${meta.id}"
+    def prefix = task.ext.prefix ?: "${meta.id}" 
     """
     # Rename scaffolds
-    sed 's/scaffold/H1.scaffold/g' ${prefix}.hic1.2.tiara.hap1_scaffolds.fa > ${prefix}.hap1.scaffolds_1.fa
-    sed 's/scaffold/H2.scaffold/g' ${prefix}.hic1.2.tiara.hap2_scaffolds.fa > ${prefix}.hap2.scaffolds_2.fa
+    sed 's/scaffold/H1.scaffold/g' ${prefix}.2.tiara.hap1_scaffolds.fa > ${prefix}.hap1.scaffolds_1.fa
+    sed 's/scaffold/H2.scaffold/g' ${prefix}.2.tiara.hap2_scaffolds.fa > ${prefix}.hap2.scaffolds_2.fa
 
     # Concatenate hap1 and hap2 scaffolds
     cat ${prefix}.hap1.scaffolds_1.fa ${prefix}.hap2.scaffolds_2.fa > "${prefix}${asmversion}_combined_scaffolds.fa"

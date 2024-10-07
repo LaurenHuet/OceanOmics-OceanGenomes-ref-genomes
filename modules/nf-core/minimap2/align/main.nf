@@ -9,7 +9,7 @@ process MINIMAP2_ALIGN {
         'biocontainers/mulled-v2-66534bcbb7031a148b13e2ad42583020b9cd25c4:3161f532a5ea6f1dec9be5667c9efc2afdac6104-0' }"
 
     input:
-    tuple val(meta), path(reads), path(cat_file)
+    tuple val(meta), path(reads), path (cat_file)
     val bam_format
     val bam_index_extension
     val cigar_paf_format
@@ -44,8 +44,9 @@ process MINIMAP2_ALIGN {
     minimap2 \\
         $args \\
         -t $task.cpus \\
-        $cat_file \\
-        $reads \\
+        $target \\
+        $query \\
+        $cigar_paf \\
         $set_cigar_bam \\
         $bam_output
 

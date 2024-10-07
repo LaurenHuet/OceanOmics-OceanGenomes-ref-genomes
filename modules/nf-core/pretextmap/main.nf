@@ -9,8 +9,7 @@ process PRETEXTMAP {
         'biocontainers/mulled-v2-f3591ce8609c7b3b33e5715333200aa5c163aa61:44321ab4d64f0b6d0c93abbd1406369d1b3da684-0' }"
 
     input:
-    tuple val(meta), path(input)
-    tuple val(meta2), path(bam), path(fai)
+    tuple val(meta), path(bam)
 
     output:
     tuple val(meta), path("*.pretext")  , emit: pretext_map

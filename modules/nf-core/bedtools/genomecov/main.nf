@@ -6,12 +6,10 @@ process BEDTOOLS_GENOMECOV {
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'oras://community.wave.seqera.io/library/bedtools_coreutils:ba273c06a3909a15':
         'community.wave.seqera.io/library/bedtools_coreutils:a623c13f66d5262b' }"
-
+ 
     input:
-    tuple val(meta), path(bam), val(scale)
-    path  sizes
+    tuple val(meta), path(bam)
     val   extension
-    val   sort
 
     output:
     tuple val(meta), path("*.dual.hap.bedgraph"), emit: genomecov
@@ -24,48 +22,27 @@ process BEDTOOLS_GENOMECOV {
     script:
     def args      = task.ext.args  ?: ''
     def args_list = args.tokenize()
-    args += (scale > 0 && scale != 1) ? " -scale $scale" : ""
-    if (!args_list.contains('-bg') && (scale > 0 && scale != 1)) {
-        args += " -bg"
-    }
     // Sorts output file by chromosome and position using additional options for performance and consistency
     // See https://www.biostars.org/p/66927/ for further details
-    def buffer   = task.memory ? "--buffer-size=${task.memory.toGiga().intdiv(2)}G" : ''
-    def sort_cmd = sort ? "| LC_ALL=C sort --parallel=$task.cpus $buffer -k1,1 -k2,2n" : ''
+
 
     def prefix = task.ext.prefix ?: "${meta.id}"
-    if (intervals.name =~ /\.bam/) {
+
         """
         bedtools \\
             genomecov \\
             -ibam $bam \\
             $args \\
-            $sort_cmd \\
             > ${prefix}.dual.hap.bedgraph
 
-    grep -w 0$ "${prefix}.dual.hap.bedgraph" | sed 's/0$/200/g' > "${prefix}.dual.hap.gaps.bedgraph"
+     grep -w 0\\\$ "${prefix}.dual.hap.bedgraph" | sed 's/0\\\$/200/g' > "${prefix}.dual.hap.gaps.bedgraph"
 
         cat <<-END_VERSIONS > versions.yml
         "${task.process}":
             bedtools: \$(bedtools --version | sed -e "s/bedtools v//g")
         END_VERSIONS
         """
-    } else {
-        """
-        bedtools \\
-            genomecov \\
-            -i $intervals \\
-            -g $sizes \\
-            $args \\
-            $sort_cmd \\
-            > ${prefix}.${extension}
 
-        cat <<-END_VERSIONS > versions.yml
-        "${task.process}":
-            bedtools: \$(bedtools --version | sed -e "s/bedtools v//g")
-        END_VERSIONS
-        """
-    }
 
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"

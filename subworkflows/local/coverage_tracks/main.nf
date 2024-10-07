@@ -5,9 +5,8 @@
 // TODO nf-core: A subworkflow SHOULD import at least two modules
 
 include { CAT_FASTQ                                      } from '../../../modules/nf-core/cat/fastq/main'
-include { MINIMAP2_ALIGN                                 } from '../../..modules/nf-core/minimap2/align/main'
-include { SAMTOOLS_SORT as SAMTOOLS_SORT_DUAL            } from '../../..modules/nf-core/samtools/sort/main'
-include { BEDTOOLS_GENOMECOV                             } from '../../..modules/nf-core/bedtools/genomecov/main'
+include { MINIMAP2_ALIGN                                 } from '../../../modules/nf-core/minimap2/align/main'
+include { BEDTOOLS_GENOMECOV                             } from '../../../modules/nf-core/bedtools/genomecov/main'
 
 workflow COVERAGE_TRACKS {
 
@@ -18,7 +17,7 @@ workflow COVERAGE_TRACKS {
     main:
 
     ch_versions = Channel.empty()
-    ch_hic_read = ch_coverage_tracks_in
+    ch_hifi_read = ch_coverage_tracks_in
         .map {
             meta, reads, assembly ->
                 return [ meta, reads ]
@@ -32,15 +31,20 @@ workflow COVERAGE_TRACKS {
 
     // TODO nf-core: substitute modules here for the modules of your subworkflow
 
-    CAT_FASTQ (ch_hic_read)
+    CAT_FASTQ (ch_hifi_read)
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first())
+
+  
+
 
     ch_minimap_in = (CAT_FASTQ.out.cat_hifi).join(ch_assembly)        
         .map {
             meta, reads, assembly ->
                 return [ meta, reads, assembly ]
         }
-    
+    ch_minimap_in.view()
+
+  
     MINIMAP2_ALIGN (
         ch_minimap_in,
         true,
@@ -49,14 +53,11 @@ workflow COVERAGE_TRACKS {
         false
     )
     ch_versions = ch_versions.mix(MINIMAP2_ALIGN.out.versions.first())
-  
-    //SAMTOOLS_SORT_DUAL ( 
-    //    MINIMAP2_ALIGN.out.bam_dual_hap,
-    //    "${meta.sample}.dual.hap.mapped.bam"
-    //)  
-    //ch_versions = ch_versions.mix(SAMTOOLS_SORT_DUAL.out.versions.first())
 
-    BEDTOOLS_GENOMECOV (MINIMAP2_ALIGN.out.bam )
+
+    BEDTOOLS_GENOMECOV (
+        MINIMAP2_ALIGN.out.bam_dual_hap,
+        "bedgraph")
     ch_versions = ch_versions.mix(BEDTOOLS_GENOMECOV.out.versions.first())
 
 
@@ -64,8 +65,8 @@ workflow COVERAGE_TRACKS {
     emit:
     // TODO nf-core: edit emitted channels
     bam      = MINIMAP2_ALIGN.out.bam_dual_hap           // channel: [ val(meta), [ bam ] ]
-    bam      = SAMTOOLS_SORT_DUAL.out.bam               // channel: [ val(meta), [ bai ] ]
-    bed      = BEDTOOLS_GENOMECOV.out.bedgraphs          // channel: [ val(meta), [ bed ] ]
+    bed      = BEDTOOLS_GENOMECOV.out.genomecov          // channel: [ val(meta), [ bed ] ]
+    bed      = BEDTOOLS_GENOMECOV.out.gaps          // channel: [ val(meta), [ bed ] ]
 
     versions = ch_versions                     // channel: [ versions.yml ]
 }
