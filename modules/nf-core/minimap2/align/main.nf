@@ -37,14 +37,12 @@ process MINIMAP2_ALIGN {
     def bam_input = "${reads.extension}".matches('sam|bam|cram')
     def samtools_reset_fastq = bam_input ? "samtools reset --threads ${task.cpus-1} $args3 $reads | samtools fastq --threads ${task.cpus-1} $args4 |" : ''
     def query = bam_input ? "-" : reads
-    def target = reference ?: (bam_input ? error("BAM input requires reference") : reads)
 
     """
     $samtools_reset_fastq \\
     minimap2 \\
         $args \\
         -t $task.cpus \\
-        $target \\
         $query \\
         $cigar_paf \\
         $set_cigar_bam \\
@@ -63,7 +61,6 @@ process MINIMAP2_ALIGN {
     def output_file = bam_format ? "${prefix}.bam" : "${prefix}.paf"
     def bam_index = bam_index_extension ? "touch ${prefix}.bam.${bam_index_extension}" : ""
     def bam_input = "${reads.extension}".matches('sam|bam|cram')
-    def target = reference ?: (bam_input ? error("BAM input requires reference") : reads)
 
     """
     touch $output_file

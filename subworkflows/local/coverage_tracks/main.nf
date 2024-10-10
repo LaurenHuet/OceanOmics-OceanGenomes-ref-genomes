@@ -65,8 +65,8 @@ workflow COVERAGE_TRACKS {
     emit:
     // TODO nf-core: edit emitted channels
     bam      = MINIMAP2_ALIGN.out.bam_dual_hap           // channel: [ val(meta), [ bam ] ]
-    bed      = BEDTOOLS_GENOMECOV.out.genomecov          // channel: [ val(meta), [ bed ] ]
-    bed      = BEDTOOLS_GENOMECOV.out.gaps          // channel: [ val(meta), [ bed ] ]
+    genomecov = BEDTOOLS_GENOMECOV.out.genomecov          // channel: [ val(meta), [ bed ] ]
+    gaps      = BEDTOOLS_GENOMECOV.out.gaps          // channel: [ val(meta), [ bed ] ]
 
     versions = ch_versions                     // channel: [ versions.yml ]
 }

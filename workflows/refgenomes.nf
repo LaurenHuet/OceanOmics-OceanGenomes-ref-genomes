@@ -400,11 +400,11 @@ workflow REFGENOMES {
     //
     // MODULE: Run Busco generate_plot again
     //
-    BUSCO_GENERATEPLOT_FINAL (
-        BUSCO_BUSCO_FINAL.out.short_summaries_txt,
-        "2.tiara."
-    )
-    ch_versions = ch_versions.mix(BUSCO_GENERATEPLOT_FINAL.out.versions.first())
+   // BUSCO_GENERATEPLOT_FINAL (
+    //    BUSCO_BUSCO_FINAL.out.short_summaries_txt,
+   //     "2.tiara."
+    //)
+    //ch_versions = ch_versions.mix(BUSCO_GENERATEPLOT_FINAL.out.versions.first())
 
     //
     // MODULE: Rename, and concatenate scaffolds
@@ -433,10 +433,10 @@ workflow REFGENOMES {
             }
              
     
-     COVERAGE_TRACKS (
-        ch_coverage_tracks_in
-    )
-    ch_versions = ch_versions.mix(COVERAGE_TRACKS.out.versions.first())
+    // COVERAGE_TRACKS (
+   //     ch_coverage_tracks_in
+   // )
+   // ch_versions = ch_versions.mix(COVERAGE_TRACKS.out.versions.first())
 
     //
     // MODULE: Run TIDK 
@@ -568,7 +568,7 @@ workflow REFGENOMES {
         ch_multiqc_wf_summary.first(),
         ch_multiqc_versions.first(),
         ch_multiqc_method_desc.first()
-    )
+   )
 
 
     emit:
