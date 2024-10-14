@@ -8,11 +8,12 @@ process PRETEXTGRAPH {
         'biocontainers/pretextgraph:0.0.6--h4ac6f70_3' }"
 
     input:
-    tuple val(meta), path(bedgraph), path(pretext_map)
+    tuple val(meta), path(pretext_map), path(bedgraph)
+    val(label)
 
     output:
 
-    tuple val(meta), path("*.pretext")  , emit: pretext_graph
+    tuple val(meta), path(pretext_map)  , emit: pretext_graph
     path "versions.yml"           , emit: versions
 
     when:
@@ -26,11 +27,12 @@ process PRETEXTGRAPH {
     cat $bedgraph | \\
     PretextGraph \\
         -i $pretext_map \\
+        -n $label \\
         $args
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        pretextgraph: \$(samtools --version |& sed '1!d ; s/samtools //')
+        pretextgraph: \$(PretextGraph | grep "Version" | sed 's/PretextGraph Version //g')
     END_VERSIONS
     """
 
@@ -43,7 +45,7 @@ process PRETEXTGRAPH {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        pretextgraph: \$(pretextgraph --version |& sed '1!d ; s/pretextgraph //')
+        pretextgraph: \$(PretextGraph | grep "Version" | sed 's/PretextGraph Version //g')
     END_VERSIONS
     """
 }

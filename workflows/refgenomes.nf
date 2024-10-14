@@ -27,8 +27,8 @@ include { TIARA_TIARA as TIARA_TIARA_HAP1                } from '../modules/nf-c
 include { TIARA_TIARA as TIARA_TIARA_HAP2                } from '../modules/nf-core/tiara/tiara/main'
 include { BBMAP_FILTERBYNAME as BBMAP_FILTERBYNAME_HAP1  } from '../modules/local/bbmap/filterbyname/main'
 include { BBMAP_FILTERBYNAME as BBMAP_FILTERBYNAME_HAP2  } from '../modules/local/bbmap/filterbyname/main'
-include { GFASTATS2 as GFASTATS_HAP1_FINAL                } from '../modules/nf-core/gfastats2/main'
-include { GFASTATS2 as GFASTATS_HAP2_FINAL                } from '../modules/nf-core/gfastats2/main'
+include { GFASTATS2 as GFASTATS_HAP1_FINAL                } from '../modules/local/gfastats2/main'
+include { GFASTATS2 as GFASTATS_HAP2_FINAL                } from '../modules/local/gfastats2/main'
 include { BUSCO_BUSCO as BUSCO_BUSCO_FINAL               } from '../modules/nf-core/busco/busco/main'
 include { BUSCO_GENERATEPLOT as BUSCO_GENERATEPLOT_FINAL } from '../modules/nf-core/busco/generateplot/main'
 include { CAT_SCAFFOLDS                                  } from '../modules/local/cat_scaffolds/main'
@@ -41,9 +41,12 @@ include { OMNIC as OMNIC_DUAL_HAP                        } from '../subworkflows
 include { PRETEXTMAP as PRETEXTMAP_HAP_1                 } from '../modules/nf-core/pretextmap/main'
 include { PRETEXTMAP as PRETEXTMAP_HAP_2                 } from '../modules/nf-core/pretextmap/main'
 include { PRETEXTMAP as PRETEXTMAP_DUAL_HAP              } from '../modules/nf-core/pretextmap/main'
+include { PRETEXTMAP2 as PRETEXTMAP_HIGH_RES            } from '../modules/nf-core/pretextmap2/main'
 include { PRETEXTSNAPSHOT as PRETEXTSNAPSHOT_HAP1        } from '../modules/nf-core/pretextsnapshot/main' 
 include { PRETEXTSNAPSHOT as PRETEXTSNAPSHOT_HAP2        } from '../modules/nf-core/pretextsnapshot/main' 
-include { PRETEXTSNAPSHOT as PRETEXTSNAPSHOT_DUAL_HAP    } from '../modules/nf-core/pretextsnapshot/main'  
+include { PRETEXTSNAPSHOT as PRETEXTSNAPSHOT_DUAL_HAP    } from '../modules/nf-core/pretextsnapshot/main'
+include { PRETEXTGRAPH as PRETEXTGRAPH_GAPS              } from '../modules/local/pretextgraph/main'
+include { PRETEXTGRAPH as PRETEXTGRAPH_COVERAGE          } from '../modules/local/pretextgraph/main'
 include { MD5SUM as MD5SUM_OMNICS_HAP1                   } from '../modules/local/md5sum/main'
 include { MD5SUM as MD5SUM_OMNICS_HAP2                   } from '../modules/local/md5sum/main'
 include { MD5SUM as MD5SUM_YAHS_HAP1                     } from '../modules/local/md5sum/main'
@@ -225,7 +228,8 @@ workflow REFGENOMES {
         BUSCO_BUSCO.out.short_summaries_txt,
         "0.hifiasm"
     )
-    ch_versions = ch_versions.mix(BUSCO_GENERATEPLOT.out.versions.first())
+   ch_versions = ch_versions.mix(BUSCO_GENERATEPLOT.out.versions.first())
+
 
     //
     // MODULE: Run Merqury
@@ -388,6 +392,8 @@ workflow REFGENOMES {
                 return [ meta, [ hap1_scaffolds, hap2_scaffolds ] ]
         }
 
+    busco_final_assemblies_ch.view()
+
     BUSCO_BUSCO_FINAL (
         busco_final_assemblies_ch,
         params.buscomode,
@@ -399,12 +405,12 @@ workflow REFGENOMES {
 
     //
     // MODULE: Run Busco generate_plot again
-    //
-   // BUSCO_GENERATEPLOT_FINAL (
-    //    BUSCO_BUSCO_FINAL.out.short_summaries_txt,
-   //     "2.tiara."
-    //)
-    //ch_versions = ch_versions.mix(BUSCO_GENERATEPLOT_FINAL.out.versions.first())
+    
+    BUSCO_GENERATEPLOT_FINAL (
+        BUSCO_BUSCO_FINAL.out.short_summaries_txt,
+        "2.tiara."
+        )
+    ch_versions = ch_versions.mix(BUSCO_GENERATEPLOT_FINAL.out.versions.first())
 
     //
     // MODULE: Rename, and concatenate scaffolds
@@ -433,10 +439,10 @@ workflow REFGENOMES {
             }
              
     
-    // COVERAGE_TRACKS (
-   //     ch_coverage_tracks_in
-   // )
-   // ch_versions = ch_versions.mix(COVERAGE_TRACKS.out.versions.first())
+     COVERAGE_TRACKS (
+        ch_coverage_tracks_in
+    )
+    ch_versions = ch_versions.mix(COVERAGE_TRACKS.out.versions.first())
 
     //
     // MODULE: Run TIDK 
@@ -467,58 +473,90 @@ workflow REFGENOMES {
                 return [ meta, reads, assemblies ]
             }
 
-  // OMNIC_HAP1_FINAL (
-  //      ch_omnic_hap1_in,
-  //      "hap1"
-   // )
-  //  ch_versions = ch_versions.mix(OMNIC_HAP1_FINAL.out.versions.first())
+   OMNIC_HAP1_FINAL (
+        ch_omnic_hap1_in,
+        "hap1"
+         )
+  ch_versions = ch_versions.mix(OMNIC_HAP1_FINAL.out.versions.first())
 
-  //  OMNIC_HAP2_FINAL (
-  //      ch_omnic_hap2_in,
-  //      "hap2"
-  //  )
-  //  ch_versions = ch_versions.mix(OMNIC_HAP2_FINAL.out.versions.first())
+      OMNIC_HAP2_FINAL (
+       ch_omnic_hap2_in,
+        "hap2"
+    )
+    ch_versions = ch_versions.mix(OMNIC_HAP2_FINAL.out.versions.first())
 
-  //  OMNIC_DUAL_HAP (
- //       ch_omic_dual_in,
-  //      "dual"
-  //  )
+    OMNIC_DUAL_HAP (
+        ch_omic_dual_in,
+        "dual"
+    )
 
-  //  ch_versions = ch_versions.mix(OMNIC_DUAL_HAP.out.versions.first())
+    ch_versions = ch_versions.mix(OMNIC_DUAL_HAP.out.versions.first())
 
     //
     // MODULE: Run Pretext Map
     ///
 
-   // PRETEXTMAP_HAP_1 (OMNIC_HAP1_FINAL.out.bam)
+    PRETEXTMAP_HAP_1 (OMNIC_HAP1_FINAL.out.bam,
+                        "hap1",
+                        "2.tiara.")
     
-   // ch_versions = ch_versions.mix(PRETEXTMAP_HAP_1.out.versions.first())
+    ch_versions = ch_versions.mix(PRETEXTMAP_HAP_1.out.versions.first())
     
-   // PRETEXTMAP_HAP_2 (OMNIC_HAP2_FINAL.out.bam)
+    PRETEXTMAP_HAP_2 (OMNIC_HAP2_FINAL.out.bam,
+                    "hap2",
+                    "2.tiara")
     
-   // ch_versions = ch_versions.mix(PRETEXTMAP_HAP_1.out.versions.first())
+    ch_versions = ch_versions.mix(PRETEXTMAP_HAP_1.out.versions.first())
     
-   // PRETEXTMAP_DUAL_HAP (OMNIC_DUAL_HAP.out.bam)
+    PRETEXTMAP_DUAL_HAP (OMNIC_DUAL_HAP.out.bam, 
+                    "dual",
+                    "2.tiara")
     
-   // ch_versions = ch_versions.mix(PRETEXTMAP_HAP_1.out.versions.first())
+    ch_versions = ch_versions.mix(PRETEXTMAP_HAP_1.out.versions.first())
+
+
+    PRETEXTMAP_HIGH_RES (OMNIC_DUAL_HAP.out.bam, 
+                    "dual-hi-res",
+                    "2.tiara")
+    
+    ch_versions = ch_versions.mix(PRETEXTMAP_HIGH_RES.out.versions.first())
     
     //
     // MODULE: Run Pretext snapshot
     //
 
-  //  PRETEXTSNAPSHOT_HAP1 (PRETEXTMAP_HAP_1.out.pretext_map)  
+    PRETEXTSNAPSHOT_HAP1 (PRETEXTMAP_HAP_1.out.pretext_map,
+                        "hap1",
+                        "2.tiara")  
     
-   // ch_versions = ch_versions.mix(PRETEXTSNAPSHOT_HAP1.out.versions.first())
+    ch_versions = ch_versions.mix(PRETEXTSNAPSHOT_HAP1.out.versions.first())
 
-   // PRETEXTSNAPSHOT_HAP2 (PRETEXTMAP_HAP_2.out.pretext_map)
+    PRETEXTSNAPSHOT_HAP2 (PRETEXTMAP_HAP_2.out.pretext_map,
+                    "hap2",
+                    "2.tiara")
     
-  //  ch_versions = ch_versions.mix(PRETEXTSNAPSHOT_HAP2.out.versions.first())
+    ch_versions = ch_versions.mix(PRETEXTSNAPSHOT_HAP2.out.versions.first())
 
-   // PRETEXTSNAPSHOT_DUAL_HAP (PRETEXTMAP_DUAL_HAP.out.pretext_map)
+    PRETEXTSNAPSHOT_DUAL_HAP (PRETEXTMAP_DUAL_HAP.out.pretext_map, 
+                    "dual",
+                    "2.tiara")
     
-   // ch_versions = ch_versions.mix(PRETEXTSNAPSHOT_DUAL_HAP.out.versions.first())
+    ch_versions = ch_versions.mix(PRETEXTSNAPSHOT_DUAL_HAP.out.versions.first())
 
-    
+
+    //Modual run pretext graph
+
+    PRETEXTGRAPH_GAPS(PRETEXTMAP_DUAL_HAP.out.pretext_map.join(COVERAGE_TRACKS.out.genomecov),
+            "coverage")
+
+    ch_versions = ch_versions.mix(PRETEXTGRAPH_GAPS.out.versions.first())
+
+    PRETEXTGRAPH_COVERAGE(PRETEXTMAP_DUAL_HAP.out.pretext_map.join(COVERAGE_TRACKS.out.gaps),
+                "gaps")
+
+    ch_versions = ch_versions.mix(PRETEXTGRAPH_COVERAGE.out.versions.first())
+
+
  //
     // Collate and save software versions
     //
@@ -538,17 +576,18 @@ workflow REFGENOMES {
     ch_methods_description                = Channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))
 
     ch_multiqc_files                      = ch_multiqc_files.mix(BUSCO_GENERATEPLOT.out.png)
-    //ch_multiqc_files                      = ch_multiqc_files.mix(BUSCO_GENERATEPLOT_FINAL.out.png)
+    ch_multiqc_files                      = ch_multiqc_files.mix(BUSCO_GENERATEPLOT_FINAL.out.png)
     ch_multiqc_files                      = ch_multiqc_files.mix(GENOMESCOPE2.out.linear_plot_png)
-    ch_multiqc_files                      = ch_multiqc_files.mix(GENOMESCOPE2.out.transformed_linear_plot_png)
-    ch_multiqc_files                      = ch_multiqc_files.mix(GENOMESCOPE2.out.log_plot_png)
-    ch_multiqc_files                      = ch_multiqc_files.mix(GENOMESCOPE2.out.transformed_log_plot_png)
     ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_cn_fl_png)
     ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_cn_ln_png)
     ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_cn_st_png)
     ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_asm_fl_png)
     ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_asm_ln_png)
     ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_asm_st_png)
+    ch_multiqc_files                      = ch_multiqc_files.mix(GFASTATS_HAP1.out.assembly_summary)
+    ch_multiqc_files                      = ch_multiqc_files.mix(GFASTATS_HAP2.out.assembly_summary)
+    ch_multiqc_files                      = ch_multiqc_files.mix(GFASTATS_HAP1_FINAL.out.assembly_summary)
+    ch_multiqc_files                      = ch_multiqc_files.mix(GFASTATS_HAP2_FINAL.out.assembly_summary)
     ch_multiqc_wf_summary                 = ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml')
     ch_multiqc_versions                   = ch_collated_versions
     ch_multiqc_method_desc                = ch_methods_description.collectFile(name: 'methods_description_mqc.yaml', sort: false)
@@ -557,7 +596,7 @@ workflow REFGENOMES {
         .groupTuple()
         .map {
             meta, files ->
-                return [ meta, files[0], files[1], files[2], files[3], files[4], files[5], files[6], files[7], files[8], files[9], files[10], files[11], files[12], files[13], files[14], files[15] ]
+                return [ meta, files[0], files[1], files[2], files[3], files[4], files[5], files[6], files[7], files[8], files[9], files[10], files[11], files[12], files[13], files[14] ]
         }
 
     MULTIQC (

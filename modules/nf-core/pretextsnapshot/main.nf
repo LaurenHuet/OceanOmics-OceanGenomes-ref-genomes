@@ -9,6 +9,8 @@ process PRETEXTSNAPSHOT {
 
     input:
     tuple val(meta), path(pretext_map)
+    val (hap)
+    val (asmversion)
 
     output:
     tuple val(meta), path('*.{jpeg,png,bmp}'), emit: image
@@ -19,12 +21,12 @@ process PRETEXTSNAPSHOT {
 
     script:
     def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}."
+    def prefix = task.ext.prefix ?: "${meta.id}"
     """
     PretextSnapshot \\
         $args \\
         --map $pretext_map \\
-        --prefix $prefix \\
+        --prefix ${prefix}.${asmversion}.${hap}.pretext_snapshot \\
         --folder .
 
     cat <<-END_VERSIONS > versions.yml

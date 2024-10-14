@@ -32,8 +32,6 @@ process MINIMAP2_ALIGN {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def bam_index = bam_index_extension ? "${prefix}.bam##idx##${prefix}.bam.${bam_index_extension} --write-index" : "${prefix}.bam"
     def bam_output = bam_format ? "-a | samtools sort -@ ${task.cpus-1} -o ${bam_index} ${args2}" : "-o ${prefix}.paf"
-    def cigar_paf = cigar_paf_format && !bam_format ? "-c" : ''
-    def set_cigar_bam = cigar_bam && bam_format ? "-L" : ''
     def bam_input = "${reads.extension}".matches('sam|bam|cram')
     def samtools_reset_fastq = bam_input ? "samtools reset --threads ${task.cpus-1} $args3 $reads | samtools fastq --threads ${task.cpus-1} $args4 |" : ''
     def query = bam_input ? "-" : reads
@@ -43,16 +41,15 @@ process MINIMAP2_ALIGN {
     minimap2 \\
         $args \\
         -t $task.cpus \\
+        $cat_file \\
         $query \\
-        $cigar_paf \\
-        $set_cigar_bam \\
         $bam_output
 
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         minimap2: \$(minimap2 --version 2>&1)
-        samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//')
+        samtools: \$(samtools --version 2>&1 | grep ^samtools | sed 's/samtools //g')
     END_VERSIONS
     """
 
@@ -69,6 +66,7 @@ process MINIMAP2_ALIGN {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         minimap2: \$(minimap2 --version 2>&1)
+        samtools: \$(samtools --version 2>&1 | grep ^samtools | sed 's/samtools //g')
     END_VERSIONS
     """
 }

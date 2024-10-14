@@ -42,7 +42,7 @@ process SAMTOOLS_SORT {
         -T ${prefix} \\
         --threads $task.cpus \\
         ${reference} \\
-        -o ${prefix}_${haplotype}.${asmversion}.${extension} \\
+        -o ${prefix}.${haplotype}.${asmversion}.${extension} \\
         -
 
     cat <<-END_VERSIONS > versions.yml

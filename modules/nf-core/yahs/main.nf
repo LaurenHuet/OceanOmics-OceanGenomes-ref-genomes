@@ -26,7 +26,7 @@ process YAHS {
 
     """
     yahs $args \\
-        -o ${prefix}_${haplotype} \\
+        -o ${prefix}${haplotype} \\
         $fasta \\
         $hic_map
 

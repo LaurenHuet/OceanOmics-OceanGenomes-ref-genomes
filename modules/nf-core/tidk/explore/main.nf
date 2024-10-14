@@ -27,8 +27,8 @@ process TIDK_EXPLORE {
         $cat_file \\
         > ${prefix}.telomeric_locations.bedgraph
 
- 
-sort -k1,1 -k2,2n -o "${prefix}_sorted_telomeric_locations.bedgraph" "${prefix}.telomeric_locations.bedgraph"
+
+    sort -k1,1 -k2,2n -o "${prefix}_sorted_telomeric_locations.bedgraph" "${prefix}.telomeric_locations.bedgraph"
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

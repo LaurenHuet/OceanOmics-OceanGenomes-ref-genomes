@@ -1,9 +1,3 @@
-// TODO nf-core: If in doubt look at other nf-core/subworkflows to see how we are doing things! :)
-//               https://github.com/nf-core/modules/tree/master/subworkflows
-//               You can also ask for help via your pull request or on the #subworkflows channel on the nf-core Slack workspace:
-//               https://nf-co.re/join
-// TODO nf-core: A subworkflow SHOULD import at least two modules
-
 include { CAT_FASTQ                                      } from '../../../modules/nf-core/cat/fastq/main'
 include { MINIMAP2_ALIGN                                 } from '../../../modules/nf-core/minimap2/align/main'
 include { BEDTOOLS_GENOMECOV                             } from '../../../modules/nf-core/bedtools/genomecov/main'
@@ -11,7 +5,7 @@ include { BEDTOOLS_GENOMECOV                             } from '../../../module
 workflow COVERAGE_TRACKS {
 
     take:
-    // TODO nf-core: edit input (take) channels
+    
     ch_coverage_tracks_in    //channel: [val(meta), [reads] [assembly] ] 
 
     main:
@@ -29,20 +23,18 @@ workflow COVERAGE_TRACKS {
         }
     ch_versions = Channel.empty()
 
-    // TODO nf-core: substitute modules here for the modules of your subworkflow
+    // Run modual cat_fastq
 
     CAT_FASTQ (ch_hifi_read)
     ch_versions = ch_versions.mix(CAT_FASTQ.out.versions.first())
 
-  
-
+    // Run modual minimap
 
     ch_minimap_in = (CAT_FASTQ.out.cat_hifi).join(ch_assembly)        
         .map {
             meta, reads, assembly ->
                 return [ meta, reads, assembly ]
         }
-    ch_minimap_in.view()
 
   
     MINIMAP2_ALIGN (
@@ -54,6 +46,7 @@ workflow COVERAGE_TRACKS {
     )
     ch_versions = ch_versions.mix(MINIMAP2_ALIGN.out.versions.first())
 
+     // Run module bedtools
 
     BEDTOOLS_GENOMECOV (
         MINIMAP2_ALIGN.out.bam_dual_hap,

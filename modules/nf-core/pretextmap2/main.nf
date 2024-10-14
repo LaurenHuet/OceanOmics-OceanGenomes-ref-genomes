@@ -1,7 +1,6 @@
 
-process PRETEXTMAP {
+process PRETEXTMAP2 {
     tag "$meta.id"
-    label 'process_single'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -14,7 +13,7 @@ process PRETEXTMAP {
     val (asmversion)
 
     output:
-    tuple val(meta), path("*.pretext")  , emit: pretext_map
+    tuple val(meta), path("*.pretext")  , emit: pretext_map_highres
     path "versions.yml"                 , emit: versions
 
     when:
@@ -35,7 +34,7 @@ process PRETEXTMAP {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         pretextmap: \$(PretextMap | grep "Version" | sed 's/PretextMap Version //g')
-        samtools: \$(samtools --version 2>&1 | grep ^samtools | sed 's/samtools //g')
+        samtools: \$(echo \$(samtools --version 2>&1) | sed 's/^.*samtools //; s/Using.*\$//' )
     END_VERSIONS
     """
 

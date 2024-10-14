@@ -94,8 +94,14 @@ def getWorkflowVersion() {
 //
 def processVersionsFromYAML(yaml_file) {
     def yaml = new org.yaml.snakeyaml.Yaml()
-    def versions = yaml.load(yaml_file).collectEntries { k, v -> [k.tokenize(':')[-1], v] }
-    return yaml.dumpAsMap(versions).trim()
+    
+    def versions = yaml.load(yaml_file)
+    
+    def coll = versions. collectEntries { k, v ->
+        def key = k.toString().split(':').last().trim()
+        [key, v]
+    }// Claude-generated-code that skips lines without :   
+return yaml.dumpAsMap(coll).trim()
 }
 
 //

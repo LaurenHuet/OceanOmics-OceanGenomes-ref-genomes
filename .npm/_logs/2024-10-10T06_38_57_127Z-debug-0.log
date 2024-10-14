@@ -1,0 +1,31 @@
+0 verbose cli /home/lhuet/.cache/pre-commit/repof6c_p9ur/node_env-default/bin/node /home/lhuet/.cache/pre-commit/repof6c_p9ur/node_env-default/bin/npm
+1 info using npm@10.8.3
+2 info using node@v22.9.0
+3 silly config load:file:/home/lhuet/.cache/pre-commit/repof6c_p9ur/node_env-default/lib/node_modules/npm/npmrc
+4 silly config load:file:/home/lhuet/.npmrc
+5 silly config load:file:/home/lhuet/.cache/pre-commit/repof6c_p9ur/node_env-default/etc/npmrc
+6 verbose title npm install /home/lhuet/.cache/pre-commit/repof6c_p9ur/placeholder_package-0.0.0.tgz prettier@2.7.1
+7 verbose argv "install" "--global" "/home/lhuet/.cache/pre-commit/repof6c_p9ur/placeholder_package-0.0.0.tgz" "prettier@2.7.1"
+8 verbose logfile logs-max:10 dir:/home/lhuet/.npm/_logs/2024-10-10T06_38_57_127Z-
+9 verbose logfile /home/lhuet/.npm/_logs/2024-10-10T06_38_57_127Z-debug-0.log
+10 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+11 silly logfile done cleaning log files
+12 silly idealTree buildDeps
+13 silly fetch manifest prettier@2.7.1
+14 silly packumentCache full:https://registry.npmjs.org/prettier cache-miss
+15 http fetch GET 200 https://registry.npmjs.org/prettier 131ms (cache miss)
+16 silly packumentCache full:https://registry.npmjs.org/prettier set size:undefined disposed:false
+17 silly fetch manifest placeholder_package@file:../../placeholder_package-0.0.0.tgz
+18 silly placeDep ROOT placeholder_package@0.0.0 OK for:  want: file:../../placeholder_package-0.0.0.tgz
+19 silly placeDep ROOT prettier@2.7.1 OK for:  want: 2.7.1
+20 silly reify moves {}
+21 silly tarball no local data for prettier@https://registry.npmjs.org/prettier/-/prettier-2.7.1.tgz. Extracting by manifest.
+22 http fetch GET 200 https://registry.npmjs.org/prettier/-/prettier-2.7.1.tgz 267ms (cache miss)
+23 silly ADD node_modules/prettier
+24 silly ADD node_modules/placeholder_package
+25 verbose cwd /home/lhuet/.cache/pre-commit/repof6c_p9ur
+26 verbose os Linux 5.14.21-150500.55.49_13.0.57-cray_shasta_c
+27 verbose node v22.9.0
+28 verbose npm  v10.8.3
+29 verbose exit 0
+30 info ok

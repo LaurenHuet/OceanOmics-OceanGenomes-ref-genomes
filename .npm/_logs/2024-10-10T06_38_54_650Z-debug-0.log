@@ -1,0 +1,22 @@
+0 verbose cli /home/lhuet/.cache/pre-commit/repof6c_p9ur/node_env-default/bin/node /home/lhuet/.cache/pre-commit/repof6c_p9ur/node_env-default/bin/npm
+1 info using npm@10.8.3
+2 info using node@v22.9.0
+3 silly config load:file:/home/lhuet/.cache/pre-commit/repof6c_p9ur/node_env-default/lib/node_modules/npm/npmrc
+4 silly config load:file:/home/lhuet/.cache/pre-commit/repof6c_p9ur/.npmrc
+5 silly config load:file:/home/lhuet/.npmrc
+6 silly config load:file:/home/lhuet/.cache/pre-commit/repof6c_p9ur/node_env-default/etc/npmrc
+7 verbose title npm install
+8 verbose argv "install" "--include" "dev" "--include" "prod" "--ignore-prepublish" "--no-progress" "--no-save"
+9 verbose logfile logs-max:10 dir:/home/lhuet/.npm/_logs/2024-10-10T06_38_54_650Z-
+10 verbose logfile /home/lhuet/.npm/_logs/2024-10-10T06_38_54_650Z-debug-0.log
+11 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+12 silly logfile done cleaning log files
+13 silly idealTree buildDeps
+14 silly reify moves {}
+15 silly audit report null
+16 verbose cwd /home/lhuet/.cache/pre-commit/repof6c_p9ur
+17 verbose os Linux 5.14.21-150500.55.49_13.0.57-cray_shasta_c
+18 verbose node v22.9.0
+19 verbose npm  v10.8.3
+20 verbose exit 0
+21 info ok
