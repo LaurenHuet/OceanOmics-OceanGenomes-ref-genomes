@@ -38,17 +38,29 @@ rclone copy ${OG}/03-assembly/busco pawsey0812:oceanomics-assemblies/${OG}/${OG}
 
 #Back up hifi-hic scaffolded bam files from OMNIC pipeline
 
-rclone copy ${OG}/04-scaffolding/omnic/${OG}_${asm_ver}.hap1.hic.mapped.contigs.bam pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/bam
-rclone copy ${OG}/04-scaffolding/omnic/${OG}_${asm_ver}.hap1.hic.mapped.contigs.bam.bai pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/bam
+#rclone copy ${OG}/04-scaffolding/omnic/${OG}_${asm_ver}.hap1.hic.mapped.contigs.bam pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/bam
+#rclone copy ${OG}/04-scaffolding/omnic/${OG}_${asm_ver}.hap1.hic.mapped.contigs.bam.bai pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/bam
 
-rclone copy ${OG}/04-scaffolding/omnic/${OG}_${asm_ver}.hap2.hic.mapped.contigs.bam pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/bam
-rclone copy ${OG}/04-scaffolding/omnic/${OG}_${asm_ver}.hap2.hic.mapped.contigs.bam.bai pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/bam
+#rclone copy ${OG}/04-scaffolding/omnic/${OG}_${asm_ver}.hap2.hic.mapped.contigs.bam pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/bam
+#rclone copy ${OG}/04-scaffolding/omnic/${OG}_${asm_ver}.hap2.hic.mapped.contigs.bam.bai pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/bam
+
+
+##delete 
+rclone copy ${OG}/04-scaffolding/omnic/OG820_v240501.hic1_hap1.hic.mapped.contigs.bam  pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/bam
+rclone copy ${OG}/04-scaffolding/omnic/OG820_v240501.hic1_hap1.hic.mapped.contigs.bam.bai pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/bam
+
+rclone copy ${OG}/04-scaffolding/omnic/OG820_v240501.hic1_hap2.hic.mapped.contigs.bam  pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/bam
+rclone copy ${OG}/04-scaffolding/omnic/OG820_v240501.hic1_hap2.hic.mapped.contigs.bam .bai pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/bam
 
 
 # back up YAHS scaffoled files
 
-rclone copy ${OG}/04-scaffolding/yahs/${OG}_${asm_ver}.1.yahs.hap1_scaffolds_final.fa pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/assembly
-rclone copy ${OG}/04-scaffolding/yahs/${OG}_${asm_ver}.1.yahs.hap2_scaffolds_final.fa pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/assembly
+#rclone copy ${OG}/04-scaffolding/yahs/${OG}_${asm_ver}.1.yahs.hap1_scaffolds_final.fa pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/assembly
+#rclone copy ${OG}/04-scaffolding/yahs/${OG}_${asm_ver}.1.yahs.hap2_scaffolds_final.fa pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/assembly
+
+#Delete this
+rclone copy ${OG}/04-scaffolding/yahs/${OG}_${asm_ver}_.1.yahs.hap1_scaffolds_final.fa pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/assembly
+rclone copy ${OG}/04-scaffolding/yahs/${OG}_${asm_ver}_.1.yahs.hap2_scaffolds_final.fa pawsey0812:oceanomics-assemblies/${OG}/${OG}_${asm_ver}/assembly
 
 
 # Back up decontamination results and QC stats

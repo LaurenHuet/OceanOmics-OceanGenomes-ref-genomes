@@ -8,7 +8,7 @@ process MULTIQC {
         'biocontainers/multiqc:1.21--pyhdfd78af_0' }"
 
     input:
-    tuple val(meta), path(files0), path(files1), path(files2), path(files3), path(files4), path(files5), path(files6), path(files7), path(files8), path(files9), path(files10), path(files11), path(files12), path(files13), path(files14)
+    tuple val(meta), path(files0) //, path(files1), path(files2), path(files3), path(files4), path(files5), path(files6), path(files7), path(files8), path(files9), path(files10), path(files11), path(files12), path(files13), path(files14)
     path(multiqc_config)
     path(extra_multiqc_config)
     path(multiqc_logo)

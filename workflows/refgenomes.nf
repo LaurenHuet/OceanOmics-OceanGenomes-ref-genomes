@@ -10,6 +10,9 @@ include { FASTQC as FASTQC_HIC                           } from '../modules/nf-c
 include { MERYL_COUNT                                    } from '../modules/nf-core/meryl/count/main'
 include { MERYL_HISTOGRAM                                } from '../modules/nf-core/meryl/histogram/main'
 include { GENOMESCOPE2                                   } from '../modules/nf-core/genomescope2/main'
+include { HIFIASM1 as HIFIASM_SOLO                       } from '../modules/local/hifiasm1/main'
+include { GFASTATS as GFASTATS_HIFI_PRIMARY              } from '../modules/nf-core/gfastats/main'
+include { GFASTATS as GFASTATS_HIFI_ALT                  } from '../modules/nf-core/gfastats/main'
 include { CAT_HIC                                        } from '../modules/local/cat_hic/main'
 include { HIFIASM                                        } from '../modules/nf-core/hifiasm/main'
 include { GFASTATS as GFASTATS_HAP1                      } from '../modules/nf-core/gfastats/main'
@@ -136,12 +139,60 @@ workflow REFGENOMES {
     )
     ch_versions = ch_versions.mix(GENOMESCOPE2.out.versions.first())
 
+
+    // 
+    // MODULE: Run hifi only assembly 
+    //
+
+    HIFIASM_SOLO( 
+        HIFIADAPTERFILT.out.reads,
+        "0.hifiasm"
+    )
+
+    ///
+    /// MODULE: gfa stats primary and alternate
+    ///
+    ch_gfastats_hifi_only_primary = HIFIASM_SOLO.out.primary_contigs.join(GENOMESCOPE2.out.summary)
+    ch_gfastats_hifi_only_alternate = HIFIASM_SOLO.out.alternate_contigs.join(GENOMESCOPE2.out.summary)
+
+
+    GFASTATS_HIFI_PRIMARY (
+        ch_gfastats_hifi_only_primary,
+        "fasta",
+        "",
+        "p_ctg",
+        "0.hifiasm",
+        [],
+        [],
+        [],
+        []
+
+    )
+        ch_versions = ch_versions.mix(GFASTATS_HIFI_PRIMARY.out.versions.first())
+
+    ch_gfastats_hifi_only_alternate = HIFIASM_SOLO.out.alternate_contigs.join(GENOMESCOPE2.out.summary)
+
+    GFASTATS_HIFI_ALT (
+        ch_gfastats_hifi_only_alternate,
+        "fasta",
+        "",
+        "a_ctg",
+        "0.hifiasm",
+        [],
+        [],
+        [],
+        []
+    )
+    ch_versions = ch_versions.mix(GFASTATS_HIFI_ALT.out.versions.first())
+
+
     //
     // MODULE: Concatenate Hi-C files together for cases when there is multiple R1 and multiple R2 files
     //
     CAT_HIC (
         ch_hic
     )
+
 
     //
     // MODULE: Run FastQC on Hi-C fastqc files
@@ -575,19 +626,19 @@ workflow REFGENOMES {
     ch_multiqc_custom_methods_description = params.multiqc_methods_description ? file(params.multiqc_methods_description, checkIfExists: true) : file("$projectDir/assets/methods_description_template.yml", checkIfExists: true)
     ch_methods_description                = Channel.value(methodsDescriptionText(ch_multiqc_custom_methods_description))
 
-    ch_multiqc_files                      = ch_multiqc_files.mix(BUSCO_GENERATEPLOT.out.png)
-    ch_multiqc_files                      = ch_multiqc_files.mix(BUSCO_GENERATEPLOT_FINAL.out.png)
+   // ch_multiqc_files                      = ch_multiqc_files.mix(BUSCO_GENERATEPLOT.out.png)
+    //ch_multiqc_files                      = ch_multiqc_files.mix(BUSCO_GENERATEPLOT_FINAL.out.png)
     ch_multiqc_files                      = ch_multiqc_files.mix(GENOMESCOPE2.out.linear_plot_png)
-    ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_cn_fl_png)
-    ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_cn_ln_png)
-    ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_cn_st_png)
-    ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_asm_fl_png)
-    ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_asm_ln_png)
-    ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_asm_st_png)
-    ch_multiqc_files                      = ch_multiqc_files.mix(GFASTATS_HAP1.out.assembly_summary)
-    ch_multiqc_files                      = ch_multiqc_files.mix(GFASTATS_HAP2.out.assembly_summary)
-    ch_multiqc_files                      = ch_multiqc_files.mix(GFASTATS_HAP1_FINAL.out.assembly_summary)
-    ch_multiqc_files                      = ch_multiqc_files.mix(GFASTATS_HAP2_FINAL.out.assembly_summary)
+    //ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_cn_fl_png)
+    //ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_cn_ln_png)
+    //ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_cn_st_png)
+    //ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_asm_fl_png)
+    //ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_asm_ln_png)
+    //ch_multiqc_files                      = ch_multiqc_files.mix(MERQURY.out.spectra_asm_st_png)
+    //ch_multiqc_files                      = ch_multiqc_files.mix(GFASTATS_HAP1.out.assembly_summary)
+    //ch_multiqc_files                      = ch_multiqc_files.mix(GFASTATS_HAP2.out.assembly_summary)
+    //ch_multiqc_files                      = ch_multiqc_files.mix(GFASTATS_HAP1_FINAL.out.assembly_summary)
+   // ch_multiqc_files                      = ch_multiqc_files.mix(GFASTATS_HAP2_FINAL.out.assembly_summary)
     ch_multiqc_wf_summary                 = ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml')
     ch_multiqc_versions                   = ch_collated_versions
     ch_multiqc_method_desc                = ch_methods_description.collectFile(name: 'methods_description_mqc.yaml', sort: false)
@@ -596,8 +647,17 @@ workflow REFGENOMES {
         .groupTuple()
         .map {
             meta, files ->
-                return [ meta, files[0], files[1], files[2], files[3], files[4], files[5], files[6], files[7], files[8], files[9], files[10], files[11], files[12], files[13], files[14] ]
+                return [ meta, files[0] ]
         }
+
+
+
+  //  ch_multiqc_files = ch_multiqc_files
+  //      .groupTuple()
+  //      .map {
+  //          meta, files ->
+  //              return [ meta, files[0], files[1], files[2], files[3], files[4], files[5], files[6], files[7], files[8], files[9], files[10], files[11], files[12], files[13], files[14] ]
+   //     }
 
     MULTIQC (
         ch_multiqc_files,
