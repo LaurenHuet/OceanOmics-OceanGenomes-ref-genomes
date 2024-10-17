@@ -6,7 +6,7 @@
 
 ## Introduction
 
-This pipeline is designed to handle the genome assembly and analysis of high-quality marine vertebrate genomes as part of the **Ocean Genomes Project**. It processes raw HiFi and Hi-C data, performs assembly, scaffolding, decontamination and generates key assembly statistics and prepares the genome for manual curation within pretext map.
+This pipeline is designed for the de novo genome assembly and analysis of high-quality marine vertebrate genomes as part of the **Ocean Genomes Project**. It processes raw HiFi and Hi-C data, performs assembly, scaffolding, decontamination and generates key assembly statistics and prepares the genome for manual curation within pretext map.
 
 <p align="center">
     <img src="docs/images/assembly-pipeline-overview.png" alt="Computational-Biology-OceanOmics/OceanGenomes-refgenomes workflow overview" width="100%">
