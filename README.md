@@ -6,7 +6,7 @@
 
 ## Introduction
 
-**Computational-Biology-OceanOmics/OceanGenomes-refgenomes** is OceanGenome's reference genome assembly pipeline that combines both hifi and hi-C input data.
+This pipeline is designed to handle the genome assembly and analysis of high-quality marine vertebrate genomes as part of the **Ocean Genomes Project**. It processes raw HiFi and Hi-C data, performs assembly, scaffolding, decontamination and generates key assembly statistics and prepares the genome for manual curation within pretext map.
 
 <p align="center">
     <img src="docs/images/assembly-pipeline-overview.png" alt="Computational-Biology-OceanOmics/OceanGenomes-refgenomes workflow overview" width="100%">
@@ -16,24 +16,31 @@
 2. PacBio Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 3. Count k-mers ([`Meryl`](https://github.com/marbl/meryl))
 4. Estimate genome size ([`GenomeScope2`](https://github.com/schatzlab/genomescope))
-5. Illumina Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-6. Assemble Pacbio & Illumina reads ([`Hifiasm`](https://github.com/chhylp123/hifiasm))
-7. Assembly stats ([`Gfastats`](https://github.com/vgl-hub/gfastats))
-8. Gene assembly QC ([`BUSCO`](https://busco.ezlab.org/))
-9. K-mer assembly QC ([`Merqury`](https://github.com/marbl/merqury))
-10. Create index ([`Samtools`](https://www.htslib.org/))
-11. Index assemble and align Hi-C reads ([`BWA`](https://github.com/lh3/bwa))
-12. Map pairs ([`Pairtools`](https://pairtools.readthedocs.io/en/latest/))
-13. Sort and index ([`Samtools`](https://www.htslib.org/))
-14. Create scaffold ([`YAHS`](https://github.com/c-zhou/yahs))
-15. Create report ([`fcs-gx`](https://github.com/ncbi/fcs-gx))
-16. Create report ([`Tiara`](https://github.com/ibe-uw/tiara))
-17. Filter scaffolds ([`BBMap`](https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
-18. Scaffold stats ([`Gfastats`](https://github.com/vgl-hub/gfastats))
-19. Scaffold QC ([`BUSCO`](https://busco.ezlab.org/))
-20. Scaffold QC ([`Merqury`](https://github.com/marbl/merqury))
-21. copy files to backup location ([`Rclone`](https://rclone.org/))
-22. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+5. Assemble hifi data ([`Hifiasm`](https://github.com/chhylp123/hifiasm))
+6. Assembly stats on hifi data ([`Gfastats`](https://github.com/vgl-hub/gfastats))
+7. Illumina Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+8. Assemble Pacbio & Illumina reads ([`Hifiasm`](https://github.com/chhylp123/hifiasm))
+9. Assembly stats ([`Gfastats`](https://github.com/vgl-hub/gfastats))
+10. Gene assembly QC ([`BUSCO`](https://busco.ezlab.org/))
+11. K-mer assembly QC ([`Merqury`](https://github.com/marbl/merqury))
+12. Create index ([`Samtools`](https://www.htslib.org/))
+13. Index assemble and align Hi-C reads ([`BWA`](https://github.com/lh3/bwa))
+14. Map pairs ([`Pairtools`](https://pairtools.readthedocs.io/en/latest/))
+15. Sort and index ([`Samtools`](https://www.htslib.org/))
+16. Create scaffold ([`YAHS`](https://github.com/c-zhou/yahs))
+17. Create decontamination report ([`fcs-gx`](https://github.com/ncbi/fcs-gx))
+18. Create decontamination report ([`Tiara`](https://github.com/ibe-uw/tiara))
+19. Filter decontaminated scaffolds ([`BBMap`](https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
+20. Scaffold stats ([`Gfastats`](https://github.com/vgl-hub/gfastats))
+21. Scaffold QC ([`BUSCO`](https://busco.ezlab.org/))
+22. Scaffold QC ([`Merqury`](https://github.com/marbl/merqury))
+23. Generate coverage tracks ([`minimap2`](https://github.com/lh3/minimap2))
+24. Predict telomere locations ([`tidk`](https://github.com/tolkit/telomeric-identifier))
+25. Align reads to scaffolds ([`BWA`](https://github.com/lh3/bwa))
+26. Align reads to scaffolds ([`Pairtools`](https://pairtools.readthedocs.io/en/latest/))
+27. Generate pretext maps ([`PretextMap`](https://github.com/sanger-tol/PretextMap))
+28. Inject coverage tracks into pretext map ([`PretextGraph`](https://github.com/sanger-tol/PretextGraph))
+30. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 
 ## Usage
 
@@ -46,12 +53,12 @@ First, prepare a samplesheet with your input data that looks as follows:
 
 ```csv
 sample,hifi_dir,hic_dir,version,date,tolid,taxid
-OG88,hifi_bams/OG89,hic_fastqs/OG89,v1,20240101,163129,163129
-OG89,hifi_bams/OG89,,v1,20240202,163129,163129
-OG90,hifi_fastqs/OG90,hic_fastqs/OG90,v1,20240303,163129,163129
+OG88,hifi_bams/OG89,hic_fastqs/OG89,hic1,v240101,OG88,163129
+OG89,hifi_bams/OG89,,hifi1,v240202,OG88,163129
+OG90,hifi_fastqs/OG90,hic_fastqs/OG90,hic1,v240303,OG88,163129
 ```
 
-Each row represents a sample. The hifi_dir column must point to a directory that contains bam files or fastq files. The hic_dir column can point to a directory containing fastq files, however this column can be left blank if there isn't Hi-C data for this sample.
+Each row represents a sample. The hifi_dir column must point to a directory that contains bam files or fastq files. The hic_dir column can point to a directory containing fastq files, however this column can be left blank if there isn't Hi-C data for this sample. Taxid refers to the NCBI taxon ID for that samples.
 
 Now, you can run the pipeline using:
 
@@ -62,9 +69,14 @@ nextflow run Computational-Biology-OceanOmics/OceanGenomes-refgenomes \
    --outdir <OUTDIR> \
    --buscodb /path/to/buscodb \
    --gxdb /path/to/gxdb \
-   --rclonedest <DESTINATION> \
-   --binddir /scratch
+   --binddir /scratch \
+   --tempdir <tempdir>
+   -c pawsey_profile.config \
+    -resume \
+    -with-report ref-genome-nextflow.html 
 ```
+
+This repository contains a custom config file to run the pipeline on the pawsey supercomputer cluster with slurm. 
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
@@ -79,7 +91,7 @@ For details about the output files and reports, please refer to the
 
 ## Credits
 
-Computational-Biology-OceanOmics/OceanGenomes-refgenomes was originally written by Emma de Jong and was converted to Nextflow by Adam Bennett and Lauren Huet. This version was built on top of the nf-core template.
+Computational-Biology-OceanOmics/OceanGenomes-refgenomes was originally adapted from the Vertebrate Genome project Galaxy pipeline (https://galaxyproject.org/projects/vgp/) by Emma de Jong and was converted to Nextflow by Adam Bennett and Lauren Huet. This version was built on top of the nf-core template.
 
 ## Citations
 
