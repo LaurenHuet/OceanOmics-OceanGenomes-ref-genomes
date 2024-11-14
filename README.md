@@ -87,7 +87,7 @@ For more details and further functionality, please refer to the [usage documenta
 ## Pipeline output
 
 For details about the output files and reports, please refer to the
-[output documentation](https://github.com/Computational-Biology-OceanOmics/OceanGenomes-refgenomes/blob/master/docs/output.md).
+[output documentation](https://github.com/LaurenHuet/OceanOmics-OceanGenomes-ref-genomes/blob/master/docs/output.md).
 
 ## Credits
 
