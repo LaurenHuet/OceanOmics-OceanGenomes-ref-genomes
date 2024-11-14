@@ -35,11 +35,12 @@ This pipeline is designed for the de novo genome assembly and analysis of high-q
 21. Scaffold QC ([`BUSCO`](https://busco.ezlab.org/))
 22. Scaffold QC ([`Merqury`](https://github.com/marbl/merqury))
 23. Generate coverage tracks ([`minimap2`](https://github.com/lh3/minimap2))
-24. Predict telomere locations ([`tidk`](https://github.com/tolkit/telomeric-identifier))
-25. Align reads to scaffolds ([`BWA`](https://github.com/lh3/bwa))
-26. Align reads to scaffolds ([`Pairtools`](https://pairtools.readthedocs.io/en/latest/))
-27. Generate pretext maps ([`PretextMap`](https://github.com/sanger-tol/PretextMap))
-28. Inject coverage tracks into pretext map ([`PretextGraph`](https://github.com/sanger-tol/PretextGraph))
+24. Generate coverage tracks ([`bedtools](https://github.com/arq5x/bedtools2))
+25. Predict telomere locations ([`tidk`](https://github.com/tolkit/telomeric-identifier))
+26. Align reads to scaffolds ([`BWA`](https://github.com/lh3/bwa))
+27. Align reads to scaffolds ([`Pairtools`](https://pairtools.readthedocs.io/en/latest/))
+28. Generate pretext maps ([`PretextMap`](https://github.com/sanger-tol/PretextMap))
+29. Inject coverage tracks into pretext map ([`PretextGraph`](https://github.com/sanger-tol/PretextGraph))
 30. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 
 ## Usage
