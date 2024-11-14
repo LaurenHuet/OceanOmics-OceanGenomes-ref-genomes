@@ -1,4 +1,4 @@
-# Computational-Biology-OceanOmics/OceanGenomes-refgenomes: Output
+# Computational-Biology-OceanOmics/OceanOmics-OceanGenomes-ref-genomes: Output
 
 ## Introduction
 
