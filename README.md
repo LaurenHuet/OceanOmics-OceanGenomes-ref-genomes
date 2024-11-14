@@ -82,16 +82,16 @@ This repository contains a custom config file to run the pipeline on the pawsey 
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
 > see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
 
-For more details and further functionality, please refer to the [usage documentation](https://github.com/Computational-Biology-OceanOmics/OceanGenomes-refgenomes/blob/master/docs/usage.md) and the [parameter documentation](https://github.com/Computational-Biology-OceanOmics/OceanGenomes-refgenomes/blob/master/docs/parameters.md).
+For more details and further functionality, please refer to the [usage documentation](https://github.com/Computational-Biology-OceanOmics/OceanOmics-OceanGenomes-ref-genomes/blob/master/docs/usage.md) and the [parameter documentation](https://github.com/Computational-Biology-OceanOmics/OceanOmics-OceanGenomes-ref-genomes/blob/master/docs/parameters.md).
 
 ## Pipeline output
 
 For details about the output files and reports, please refer to the
-[output documentation](https://github.com/Computational-Biology-OceanOmics/OceanGenomes-refgenomes/blob/master/docs/output.md).
+[output documentation](https://github.com/Computational-Biology-OceanOmics/OceanOmics-OceanGenomes-ref-genomes/blob/master/docs/output.md).
 
 ## Credits
 
-Computational-Biology-OceanOmics/OceanGenomes-refgenomes was originally adapted from the Vertebrate Genome project Galaxy pipeline (https://galaxyproject.org/projects/vgp/) by Emma de Jong and was converted to Nextflow by Adam Bennett and Lauren Huet. This version was built on top of the nf-core template.
+Computational-Biology-OceanOmics/OceanOmics-OceanGenomes-ref-genomes was originally adapted from the Vertebrate Genome project Galaxy pipeline (https://galaxyproject.org/projects/vgp/) by Emma de Jong and was converted to Nextflow by Adam Bennett and Lauren Huet. This version was built on top of the nf-core template.
 
 ## Citations
 
