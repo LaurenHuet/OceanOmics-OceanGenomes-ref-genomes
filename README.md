@@ -9,7 +9,7 @@
 This pipeline is designed for the de novo genome assembly and analysis of high-quality marine vertebrate genomes as part of the **Minderoo OceanOmics Ocean Genomes Project**. It processes raw HiFi and Hi-C data, performs assembly, scaffolding, decontamination, generates key assembly statistics and prepares the genome for manual curation within pretext map.
 
 <p align="center">
-    <img src="docs/images/OceanOmics_reference_genome_pipeline.png" alt="OceanOmics Reference Genome Pipeline Overview" width="100%">
+    <img src="docs/images/reference_genome_pipeline.png" alt="OceanOmics Reference Genome Pipeline Overview" width="100%">
 </p>
 
 1. Filter and convert bam files to fastq files ([`HiFiAdapterFilt`](https://github.com/sheinasim/HiFiAdapterFilt))
