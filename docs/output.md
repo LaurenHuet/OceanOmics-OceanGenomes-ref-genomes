@@ -33,11 +33,12 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 21. Scaffold QC ([`BUSCO`](https://busco.ezlab.org/))
 22. Scaffold QC ([`Merqury`](https://github.com/marbl/merqury))
 23. Generate coverage tracks ([`minimap2`](https://github.com/lh3/minimap2))
-24. Predict telomere locations ([`tidk`](https://github.com/tolkit/telomeric-identifier))
-25. Align reads to scaffolds ([`BWA`](https://github.com/lh3/bwa))
-26. Align reads to scaffolds ([`Pairtools`](https://pairtools.readthedocs.io/en/latest/))
-27. Generate pretext maps ([`PretextMap`](https://github.com/sanger-tol/PretextMap))
-28. Inject coverage tracks into pretext map ([`PretextGraph`](https://github.com/sanger-tol/PretextGraph))
+24. Generate coverage tracks ([`bedtools](https://github.com/arq5x/bedtools2))
+25. Predict telomere locations ([`tidk`](https://github.com/tolkit/telomeric-identifier))
+26. Align reads to scaffolds ([`BWA`](https://github.com/lh3/bwa))
+27. Align reads to scaffolds ([`Pairtools`](https://pairtools.readthedocs.io/en/latest/))
+28. Generate pretext maps ([`PretextMap`](https://github.com/sanger-tol/PretextMap))
+29. Embed coverage tracks into pretext map ([`PretextGraph`](https://github.com/sanger-tol/PretextGraph))
 30. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 
 ### HiFiAdapterFilt
@@ -161,13 +162,14 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 
 [Merqury](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02134-9) assesses genome quality.
 
+## Omnic Subworkflow
 
 ### BWA
 
 <details markdown="1">
 <summary>Output files</summary>
 
-- `bwa/`
+- `omnic/`
   - `*.bam`: bam file produced by BWA.
   - `bwa/`: Directory containing the BWA index of the assembly.
 
@@ -180,7 +182,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <details markdown="1">
 <summary>Output files</summary>
 
-- `pairtools/`
+- `omnic/`
   - `*.mapped.pairs`: Mapped pairs.
   - `*_dedup.pairs.gz`: Deduplicated pairs.
   - `*_dedup.pairs.stat`: Deduplicated pair stats.
@@ -198,7 +200,7 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 <details markdown="1">
 <summary>Output files</summary>
 
-- `samtools/`
+- `omnic/`
   - `*bam`: Sorted bam file of the Pairtools pairs.
   - `*bai`: Index of the Pairtools pairs.
   - `*fai`: Assembly index.
@@ -306,6 +308,124 @@ The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes d
 </details>
 
 [Merqury](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02134-9) assesses genome quality.
+
+### Subworkflow coverage_tracks
+
+### Minimap2
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `covergae_tracks/`
+-   `*.bam`: reads aligned to final fastas.
+
+</details>
+
+[Minimap2](https://academic.oup.com/bioinformatics/article/34/18/3094/4994778) read aligner
+
+### Bedtools
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `covergae_tracks/`
+  -`*.bedgraph`: coverage and gaps bedgraph files
+
+</details>
+
+[Bedtools](https://bedtools.readthedocs.io/en/latest/) toolset for genome arithmetic. 
+
+
+### TIDK
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `covergae_tracks/`
+  -`*.bedgraph`: sorted telomeric location bedgraph
+
+</details>
+
+[TIDK](https://academic.oup.com/gbe/article/16/1/evae001/7512899) a toolkit to identify and visualise telomeric repeats.
+
+## Omnic Subworkflow
+
+### BWA
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `omnic/`
+  - `*.bam`: bam file produced by BWA.
+  - `bwa/`: Directory containing the BWA index of the assembly.
+
+</details>
+
+[BWA](https://pubmed.ncbi.nlm.nih.gov/19451168/) Aligns short reads to a larger reference.
+
+### Pairtools
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `omnic/`
+  - `*.mapped.pairs`: Mapped pairs.
+  - `*_dedup.pairs.gz`: Deduplicated pairs.
+  - `*_dedup.pairs.stat`: Deduplicated pair stats.
+  - `*pairsam.gz`: Parsed pairs.
+  - `*pairsam.stat`: Parsed pair stats.
+  - `*pairs.gz`: Sorted pairs.
+  - `*unsorted.bam`: Unsorted pairs.
+
+</details>
+
+[Pairtools](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9949071/) is a suite of tools for contact extraction from sequencing data.
+
+### Samtools
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `omnic/`
+  - `*bam`: Sorted bam file of the Pairtools pairs.
+  - `*bai`: Index of the Pairtools pairs.
+  - `*fai`: Assembly index.
+
+</details>
+
+[Samtools](https://academic.oup.com/bioinformatics/article/25/16/2078/204688) stores alignment information.
+
+### PretextMap
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `pretext/`
+  - `*hap1.pretext`: Haplotype 1 pretext map 
+  - `*hap2.pretext`: Haplotype 2 pretext map 
+  - `*dual.pretext`: Dual Haplotype pretext map
+  -  `*dual-hi-res.pretext`: Dual Haplotype hi resolution pretext map
+  - `*snapshot.png`: images of each chromosome and for each haplotype from the pretext maps
+ 
+   </details>
+
+[PretextMap](https://github.com/sanger-tol/PretextMap) generates contact maps for manual genome curation.
+
+### PretextGraph
+
+<details markdown="1">
+<summary>Output files</summary>
+
+- `pretext/`
+  - `*hap1.pretext`: Haplotype 1 pretext map with coverage tracks embedded
+  - `*hap2.pretext`: Haplotype 2 pretext map with coverage tracks embedded
+  - `*dual.pretext`: Dual Haplotype pretext map with coverage tracks embedded
+  -  `*dual-hi-res.pretext`: Dual Haplotype hi resolution pretext map with coverage tracks embedded
+ 
+  </details>
+
+[PretextGraph](https://github.com/sanger-tol/PretextGraph) Embeddes bedgraph data into pretext maps. 
+
 
 ### MultiQC
 
