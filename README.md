@@ -12,7 +12,7 @@ This pipeline is designed for the de novo genome assembly and analysis of high-q
     <img src="docs/images/OceanOmics_reference_genome_pipeline.png" alt="OceanOmics Reference Genome Pipeline Overview" width="100%">
 </p>
 
-1. Filter and convert bam files to fastq filesc([`HiFiAdapterFilt`](https://github.com/sheinasim/HiFiAdapterFilt))
+1. Filter and convert bam files to fastq files ([`HiFiAdapterFilt`](https://github.com/sheinasim/HiFiAdapterFilt))
 2. PacBio Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
 3. Count k-mers ([`Meryl`](https://github.com/marbl/meryl))
 4. Estimate genome size ([`GenomeScope2`](https://github.com/schatzlab/genomescope))
