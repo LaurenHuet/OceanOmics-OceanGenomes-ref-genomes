@@ -13,4 +13,3 @@ All the parameters in the pipeline can be set in a config file, or they can be s
 - buscomode: Busco mode. Can be `genome`, `ogs`, or `trans` (default = `genome`).
 - buscodb: Busco database.
 - gxdb: FCS-GX database.
-- rclonedest: Destination for rclone.
