@@ -66,7 +66,6 @@ outdir: './results/'
 binddir: '/path'
 buscodb: '/path/to/busco/db'
 gxdb: '/path/to/fcsgx/gxdb'
-rclonedest: 'account:refgenomes-results'
 ```
 
 ### Updating the pipeline
