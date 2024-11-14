@@ -1,4 +1,4 @@
-# Computational-Biology-OceanOmics/OceanGenomes-refgenomes: Usage
+# Computational-Biology-OceanOmics/OceanOmics-OceanGenomes-ref-genomes: Usage
 
 ## Introduction
 
