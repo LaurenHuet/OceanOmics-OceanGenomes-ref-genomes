@@ -1,4 +1,4 @@
-# Computational-Biology-OceanOmics/OceanGenomes-refgenomes: Parameters
+# Computational-Biology-OceanOmics/OceanOmics-OceanGenomes-ref-genomes: Parameters
 
 ## Introduction
 
