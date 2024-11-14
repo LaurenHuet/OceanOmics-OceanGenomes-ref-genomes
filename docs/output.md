@@ -10,23 +10,35 @@ The directories listed below will be created in the results directory after the 
 
 The pipeline is built using [Nextflow](https://www.nextflow.io/) and processes data using the following steps:
 
-- [HiFiAdapterFilt](#hifiadapterfilt) - HiFi filtered fastqs
-- [Meryl](#meryl) - K-mer counts
-- [GenomeScope2](#genomescope2) - Genome estimated stats
-- [FastQC](#fastqc) - HiFi and Hi-C fastq QC
-- [Hifiasm](#hifiasm) - Assembly
-- [BWA](#bwa) - Index and bam file
-- [Pairtools](#pairtools) - Pair maps
-- [Samtools](#samtools) - Indexes and bam files
-- [YAHS](#yahs) - Scaffolds
-- [fcs-gx](#fcs-gx) - Report
-- [Tiara](#tiara) - Report
-- [BBMap](#bbmap) - filtered scaffolds
-- [Gfastats](#gfastats) - Assembly/scaffold stats
-- [BUSCO](#busco) - Assembly/scaffold QC
-- [Merqury](#merqury) - Assembly/scaffold QC
-- [MultiQC](#multiqc) - Aggregate report describing results and QC from the whole pipeline
-- [Pipeline information](#pipeline-information) - Report metrics generated during the workflow execution
+1. Filter and convert bam files to fastq files ([`HiFiAdapterFilt`](https://github.com/sheinasim/HiFiAdapterFilt))
+2. PacBio Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+3. Count k-mers ([`Meryl`](https://github.com/marbl/meryl))
+4. Estimate genome size ([`GenomeScope2`](https://github.com/schatzlab/genomescope))
+5. Assemble hifi data ([`Hifiasm`](https://github.com/chhylp123/hifiasm))
+6. Assembly stats on hifi data ([`Gfastats`](https://github.com/vgl-hub/gfastats))
+7. Illumina Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
+8. Assemble Pacbio & Illumina reads ([`Hifiasm`](https://github.com/chhylp123/hifiasm))
+9. Assembly stats ([`Gfastats`](https://github.com/vgl-hub/gfastats))
+10. Gene assembly QC ([`BUSCO`](https://busco.ezlab.org/))
+11. K-mer assembly QC ([`Merqury`](https://github.com/marbl/merqury))
+12. Create index ([`Samtools`](https://www.htslib.org/))
+13. Index assemble and align Hi-C reads ([`BWA`](https://github.com/lh3/bwa))
+14. Map pairs ([`Pairtools`](https://pairtools.readthedocs.io/en/latest/))
+15. Sort and index ([`Samtools`](https://www.htslib.org/))
+16. Create scaffold ([`YAHS`](https://github.com/c-zhou/yahs))
+17. Create decontamination report ([`fcs-gx`](https://github.com/ncbi/fcs-gx))
+18. Create decontamination report ([`Tiara`](https://github.com/ibe-uw/tiara))
+19. Filter decontaminated scaffolds ([`BBMap`](https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
+20. Scaffold stats ([`Gfastats`](https://github.com/vgl-hub/gfastats))
+21. Scaffold QC ([`BUSCO`](https://busco.ezlab.org/))
+22. Scaffold QC ([`Merqury`](https://github.com/marbl/merqury))
+23. Generate coverage tracks ([`minimap2`](https://github.com/lh3/minimap2))
+24. Predict telomere locations ([`tidk`](https://github.com/tolkit/telomeric-identifier))
+25. Align reads to scaffolds ([`BWA`](https://github.com/lh3/bwa))
+26. Align reads to scaffolds ([`Pairtools`](https://pairtools.readthedocs.io/en/latest/))
+27. Generate pretext maps ([`PretextMap`](https://github.com/sanger-tol/PretextMap))
+28. Inject coverage tracks into pretext map ([`PretextGraph`](https://github.com/sanger-tol/PretextGraph))
+30. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
 
 ### HiFiAdapterFilt
 
